@@ -51,7 +51,7 @@ CREATE TABLE categories (
     constraint fk_Match FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
-/* 4 - billets */
+/* 4 - billets */  
 
 CREATE TABLE billets (
     id INT AUTO_INCREMENT PRIMARY KEY,
