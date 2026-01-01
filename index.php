@@ -27,6 +27,6 @@ if (isset($_SESSION['role'])) {
 
 }
 
-// Visiteur (non connecté)
+// Visiteur (non connecte)
 require_once "pages/home.php";
 ?>
