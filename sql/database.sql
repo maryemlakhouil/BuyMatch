@@ -84,11 +84,8 @@ CREATE TABLE commentaires (
 
 CREATE VIEW vue_stats_match AS
 SELECT
-    m.id AS match_id,
-    m.equipe1,
-    m.equipe2,
-    COUNT(b.id) AS billets_vendus,
-    IFNULL(SUM(b.prix), 0) AS chiffre_affaires
+    m.id AS match_id,m.equipe1,m.equipe2,COUNT(b.id) AS billets_vendus,
+    IF NULL(SUM(b.prix), 0) AS chiffre_affaires
 FROM matches m
 LEFT JOIN billets b ON m.id = b.match_id
 GROUP BY m.id;
