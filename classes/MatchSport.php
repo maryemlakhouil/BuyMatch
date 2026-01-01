@@ -74,7 +74,7 @@ class MatchSport{
     public function getEquipe2(): string { 
         return $this->equipe2; 
     }
-    
+        
     public function getStatut(): string { 
         return $this->statut; 
     }
