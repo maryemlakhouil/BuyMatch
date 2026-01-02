@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 session_start();
 require_once "../config/database.php";
 require_once "../classes/User.php";
@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-indigo-600 to-blue-800 flex items-center justify-center">
-
+ 
 <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
     
     <div class="text-center mb-6">
@@ -112,4 +112,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 </body>
-</html>
+</html> -->
