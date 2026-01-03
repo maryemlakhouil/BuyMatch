@@ -132,6 +132,9 @@ INSERT INTO billets (user_id, match_id, categorie_id, numero_place, prix, qr_cod
 
 INSERT INTO commentaires (user_id, match_id, contenu, note) VALUES (1, 1, 'Match incroyable ', 5);
 
+/********************************
+    Mise a jour de donnée 
+********************************/
 
 UPDATE users
 SET password = '$2y$10$BAP2TPVnY6UN6FYSI/yJ7OeKvSWIbDsPLWJm5D4oPgUJMrY1ViNPO'

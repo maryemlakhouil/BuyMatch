@@ -12,6 +12,7 @@ require_once "../config/database.php";
     $message = "";
 
     /* Traitement formulaire */
+
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         function uploadLogo($file, $prefix) {
@@ -38,7 +39,7 @@ require_once "../config/database.php";
         $logoEquipe2 = uploadLogo($_FILES['logo_equipe2'], "team2");
 
         if ($nbPlaces > 2000) {
-            $message = "❌ Le nombre de places ne doit pas dépasser 2000";
+            $message = " Le nombre de places ne doit pas dépasser 2000";
         } else {
             $stmt = $db->prepare("
                 INSERT INTO matches
@@ -47,18 +48,11 @@ require_once "../config/database.php";
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
 
-            $stmt->execute([
-                $_SESSION['user_id'],
-                $equipe1,
-                $equipe2,
-                $logoEquipe1,
-                $logoEquipe2,
-                $dateHeure,
-                $lieu,
-                $nbPlaces
-            ]);
+            $stmt->execute([$_SESSION['user_id'],$equipe1,$equipe2,$logoEquipe1,$logoEquipe2,$dateHeure,$lieu,$nbPlaces]);
+
             $matchId = $db->lastInsertId();
-            $message = "✅ Match envoyé pour validation par l’administrateur";
+
+            $message = " Match envoyé pour validation par l'administrateur";
             /* Insertion catégories */
             $catNoms = $_POST['cat_nom'];
             $catPrix = $_POST['cat_prix'];
