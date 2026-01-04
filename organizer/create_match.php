@@ -19,13 +19,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 
 // Instanciation de l'organisateur
-$organisateur = new Organisateur(
-    $_SESSION['user_id'],
-    $user['nom'],
-    $user['email'],
-    '',
-    true
-);
+$organisateur = new Organisateur($_SESSION['user_id'],$user['nom'],$user['email'],'',true);
 
 $message = "";
 
@@ -56,13 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $duree     = 90;
 
     // Logos
-    $logoEquipe1 = $_FILES['logo_equipe1']['error'] === 0
-        ? uploadLogo($_FILES['logo_equipe1'], 'team1')
-        : null;
+    $logoEquipe1 = $_FILES['logo_equipe1']['error'] === 0 ? uploadLogo($_FILES['logo_equipe1'], 'team1') : null;
 
-    $logoEquipe2 = $_FILES['logo_equipe2']['error'] === 0
-        ? uploadLogo($_FILES['logo_equipe2'], 'team2')
-        : null;
+    $logoEquipe2 = $_FILES['logo_equipe2']['error'] === 0 ? uploadLogo($_FILES['logo_equipe2'], 'team2') : null;
 
     // Catégories
     $categories = [];
@@ -79,23 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Appel méthode POO
-   $matchId = $organisateur->creerMatch(
-    $equipe1,
-    $equipe2,
-    $logoEquipe1,
-    $logoEquipe2,
-    $dateHeure,
-    $lieu,
-    $duree,      // <-- ici on passe bien 90 minutes
-    $nbPlaces,   // <-- nb places total
-    $categories  // <-- tableau des catégories
-);
-
+   $matchId = $organisateur->creerMatch($equipe1,$equipe2,$logoEquipe1,$logoEquipe2,$dateHeure, $lieu, $duree,$nbPlaces, $categories);
 
     if ($matchId) {
-        $message = "✅ Match créé avec succès et envoyé pour validation par l’administrateur";
+        $message = " Match créé avec succès et envoyé pour validation par l'administrateur";
     } else {
-        $message = "❌ Erreur lors de la création du match (vérifier les données)";
+        $message = " Erreur lors de la création du match (vérifier les données)";
     }
 }
 
