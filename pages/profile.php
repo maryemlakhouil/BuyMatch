@@ -1,57 +1,58 @@
 <?php
-session_start();
+    session_start();
 
-require_once "../config/database.php";
+    require_once "../config/database.php";
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
-    exit;
-}
-
-$db = Database::connect();
-
-/* Charger infos utilisateur */
-$stmt = $db->prepare("SELECT nom, email, role FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
-
-if (!$user) {
-    die("Utilisateur introuvable");
-}
-
-$message = "";
-
-/* Mise à jour profil */
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    /* Modifier infos */
-    if (isset($_POST['update_info'])) {
-        $nom = trim($_POST['nom']);
-        $email = trim($_POST['email']);
-
-        $stmt = $db->prepare("UPDATE users SET nom = ?, email = ? WHERE id = ?");
-        $stmt->execute([$nom, $email, $_SESSION['user_id']]);
-
-        $_SESSION['nom'] = $nom;
-        $message = "✅ Profil mis à jour avec succès";
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../auth/login.php");
+        exit;
     }
 
-    /* Modifier mot de passe */
-    if (isset($_POST['update_password'])) {
-        $password = $_POST['password'];
-        $confirm = $_POST['confirm_password'];
+    $db = Database::connect();
 
-        if ($password !== $confirm) {
-            $message = "❌ Les mots de passe ne correspondent pas";
-        } else {
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
-            $stmt->execute([$hashed, $_SESSION['user_id']]);
-            $message = "🔒 Mot de passe modifié avec succès";
+    /* Charger infos utilisateur */
+    $stmt = $db->prepare("SELECT nom, email, role FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        die("Utilisateur introuvable");
+    }
+
+    $message = "";
+
+    /* Mise à jour profil */
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        /* Modifier infos */
+        if (isset($_POST['update_info'])) {
+            $nom = trim($_POST['nom']);
+            $email = trim($_POST['email']);
+
+            $stmt = $db->prepare("UPDATE users SET nom = ?, email = ? WHERE id = ?");
+            $stmt->execute([$nom, $email, $_SESSION['user_id']]);
+
+            $_SESSION['nom'] = $nom;
+            $message = " Profil mis à jour avec succès";
+        }
+
+        /* Modifier mot de passe */
+        if (isset($_POST['update_password'])) {
+            $password = $_POST['password'];
+            $confirm = $_POST['confirm_password'];
+
+            if ($password !== $confirm) {
+                $message = "Les mots de passe ne correspondent pas";
+            } else {
+                $hashed = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $stmt->execute([$hashed, $_SESSION['user_id']]);
+                $message = " Mot de passe modifié avec succès";
+            }
         }
     }
-}
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -71,8 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="min-h-screen pb-12">
 
 <div class="max-w-4xl mx-auto px-4 pt-8">
-    <!-- Ajout du bouton de retour au dashboard -->
-    <a href="dashboard.php" class="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-colors mb-8 group">
+    <a href="dashbord.php" class="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-colors mb-8 group">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Refonte des informations personnelles -->
+        
         <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
 
-        <!-- Refonte de la section sécurité -->
+
         <div class="glass-card p-8 rounded-2xl relative overflow-hidden group">
             <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
