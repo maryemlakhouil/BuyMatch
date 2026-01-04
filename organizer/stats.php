@@ -1,32 +1,28 @@
 <?php
-session_start();
+    session_start();
 
-// if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
-//     header('Location: ../auth/login.php');
-//     exit;
-// }
+    require_once "../config/database.php";
+    require_once "../classes/Organisateur.php";
 
-require_once "../config/database.php";
-require_once "../classes/Organisateur.php";
+    // if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
+    //     header('Location: ../auth/login.php');
+    //     exit;
+    // }
 
-/* Connexion DB */
-$db = Database::connect();
+    /* Connexion DB */
+    $db = Database::connect();
 
-/* Charger les infos organisateur depuis la BDD */
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+    /* Charger les infos organisateur depuis la BDD */
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
 
-if (!$user) {
-    die("Organisateur introuvable");
-}
+    if (!$user) {
+        die("Organisateur introuvable !!");
+    }
 
-/* Instanciation POO */
-$organisateur = new Organisateur(
-    $_SESSION['user_id'],
-    $user['nom'],
-    $user['email']
-);
+    /* Instanciation POO */
+    $organisateur = new Organisateur($_SESSION['user_id'],$user['nom'],$user['email']);
 
 /* Récupérer statistiques */
 $stats = $organisateur->consulterStatistiques();
