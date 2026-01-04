@@ -1,47 +1,46 @@
 <?php
-session_start();
 
-require_once "../config/database.php";
-require_once "../classes/Organisateur.php";
+    session_start();
 
-$db = Database::connect();
+    require_once "../config/database.php";
+    require_once "../classes/Organisateur.php";
 
-/* Infos organisateur */
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+    $db = Database::connect();
 
-if (!$user) {
-    die("Organisateur introuvable");
-}
+    /* Infos organisateur */
 
-/* Objet POO */
-$organisateur = new Organisateur(
-    $_SESSION['user_id'],
-    $user['nom'],
-    $user['email'],
-    ''
-);
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
 
-/* Récupérer les matchs */
-$stmt = $db->prepare("
-    SELECT id, equipe1, equipe2
-    FROM matches
-    WHERE organisateur_id = ?
-    ORDER BY date_heure DESC
-");
-$stmt->execute([$_SESSION['user_id']]);
-$matches = $stmt->fetchAll();
+    if (!$user) {
+        die("Organisateur introuvable !!");
+    }
 
-/* Avis */
-$avis = [];
-$matchSelectionne = null;
+    /* Objet POO */
 
-if (isset($_GET['match_id'])) {
-    $matchSelectionne = (int) $_GET['match_id'];
-    $avis = $organisateur->consulterAvis($matchSelectionne);
-}
+    $organisateur = new Organisateur($_SESSION['user_id'],$user['nom'],$user['email'],'');
+
+    /* Récupérer les matchs */
+    $stmt = $db->prepare("
+        SELECT id, equipe1, equipe2
+        FROM matches
+        WHERE organisateur_id = ?
+        ORDER BY date_heure DESC
+    ");
+    $stmt->execute([$_SESSION['user_id']]);
+    $matches = $stmt->fetchAll();
+
+    /* Avis */
+    $avis = [];
+    $matchSelectionne = null;
+
+    if (isset($_GET['match_id'])) {
+        $matchSelectionne = (int) $_GET['match_id'];
+        $avis = $organisateur->consulterAvis($matchSelectionne);
+    }
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -77,7 +76,7 @@ if (isset($_GET['match_id'])) {
     </div>
 
     <nav class="flex-1 px-4 space-y-2">
-        <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 font-semibold transition-all">
+        <a href="dashbord.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 font-semibold transition-all">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
             Dashboard
         </a>
