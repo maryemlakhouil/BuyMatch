@@ -72,11 +72,11 @@
 <body class="min-h-screen pb-12">
 
 <div class="max-w-4xl mx-auto px-4 pt-8">
-    <a href="dashbord.php" class="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-colors mb-8 group">
+    <a href="../organizer/dashbord.php" class="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-colors mb-8 group">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
         </svg>
-        Retour au Dashboard
+        Retour au Dashbord
     </a>
 
     <h1 class="text-4xl font-sport text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 text-center mb-12 tracking-wider uppercase">
