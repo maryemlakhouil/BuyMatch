@@ -24,9 +24,11 @@
     /* Instanciation POO */
     $organisateur = new Organisateur($_SESSION['user_id'],$user['nom'],$user['email']);
 
-/* Récupérer statistiques */
-$stats = $organisateur->consulterStatistiques();
+    /* Récupérer statistiques */
+    $stats = $organisateur->consulterStatistiques();
 ?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -58,7 +60,7 @@ $stats = $organisateur->consulterStatistiques();
     <?php if (empty($stats)): ?>
         <!-- Alerte vide stylisée -->
         <div class="glass-card p-8 rounded-2xl border-dashed border-2 border-gray-800 text-center">
-            <div class="text-5xl mb-4">📊</div>
+            <div class="text-5xl mb-4"></div>
             <p class="text-gray-400 text-lg">Aucune donnée de performance disponible pour le moment.</p>
         </div>
     <?php else: ?>
@@ -93,7 +95,7 @@ $stats = $organisateur->consulterStatistiques();
                     </td>
                     <td class="p-6 text-right">
                         <span class="text-xl font-bold text-emerald-400 font-mono">
-                            <?= number_format($row['chiffre_affaires'], 2) ?> <span class="text-[10px] uppercase opacity-50 ml-1">EUR</span>
+                            <?= number_format($row['chiffre_affaires'], 2) ?> <span class="text-[10px] uppercase opacity-50 ml-1">DH</span>
                         </span>
                     </td>
                 </tr>
@@ -110,14 +112,14 @@ $stats = $organisateur->consulterStatistiques();
         </div>
         <div class="glass-card p-6 rounded-2xl border-l-4 border-emerald-500">
             <p class="text-xs font-sport text-gray-500 uppercase mb-2">Chiffre d'Affaires Global</p>
-            <p class="text-3xl font-bold text-emerald-400"><?= number_format(array_sum(array_column($stats, 'chiffre_affaires')), 2) ?> €</p>
+            <p class="text-3xl font-bold text-emerald-400"><?= number_format(array_sum(array_column($stats, 'chiffre_affaires')), 2) ?> DH</p>
         </div>
     </div>
 
     <?php endif; ?>
 
     <div class="mt-12 text-center">
-        <a href="dashboard.php" class="inline-flex items-center text-sm font-sport text-gray-500 hover:text-white transition-colors">
+        <a href="dashbord.php" class="inline-flex items-center text-sm font-sport text-gray-500 hover:text-white transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             Retour au Dashboard
         </a>
