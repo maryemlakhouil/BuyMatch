@@ -77,34 +77,35 @@
             </thead>
             <tbody class="divide-y divide-white/5">
                 <?php foreach ($stats as $row): ?>
-                <tr class="group hover:bg-white/[0.02] transition-colors">
-                    <td class="p-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-lg bg-indigo-600/20 flex items-center justify-center font-sport text-indigo-400">VS</div>
-                            <span class="text-lg font-semibold text-white group-hover:text-indigo-400 transition-colors">
-                                <?= htmlspecialchars($row['equipe1']) ?> 
-                                <span class="text-gray-500 font-normal px-1">v</span> 
-                                <?= htmlspecialchars($row['equipe2']) ?>
+                    <tr class="group hover:bg-white/[0.02] transition-colors">
+                        <td class="p-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-lg bg-indigo-600/20 flex items-center justify-center font-sport text-indigo-400">VS</div>
+                                <span class="text-lg font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                                    <?= htmlspecialchars($row['equipe1']) ?> 
+                                    <span class="text-gray-500 font-normal px-1">v</span> 
+                                    <?= htmlspecialchars($row['equipe2']) ?>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="p-6 text-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 text-gray-300 font-mono">
+                                <?= (int)$row['billets_vendus'] ?>
                             </span>
-                        </div>
-                    </td>
-                    <td class="p-6 text-center">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/5 text-gray-300 font-mono">
-                            <?= (int)$row['billets_vendus'] ?>
-                        </span>
-                    </td>
-                    <td class="p-6 text-right">
-                        <span class="text-xl font-bold text-emerald-400 font-mono">
-                            <?= number_format($row['chiffre_affaires'], 2) ?> <span class="text-[10px] uppercase opacity-50 ml-1">DH</span>
-                        </span>
-                    </td>
-                </tr>
+                        </td>
+                        <td class="p-6 text-right">
+                            <span class="text-xl font-bold text-emerald-400 font-mono">
+                                <?= number_format($row['chiffre_affaires'], 2) ?> <span class="text-[10px] uppercase opacity-50 ml-1">DH</span>
+                            </span>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 
     <!-- Ajout d'un récapitulatif global en bas de page -->
+
     <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="glass-card p-6 rounded-2xl">
             <p class="text-xs font-sport text-gray-500 uppercase mb-2">Total Billets</p>
