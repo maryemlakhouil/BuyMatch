@@ -226,23 +226,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 class="group relative w-full overflow-hidden rounded-2xl bg-primary px-8 py-5 font-orbitron font-black text-white transition-all hover:scale-[1.01] active:scale-95 shadow-lg shadow-primary/20">
             <div class="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-[shimmer_2s_infinite] opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <span class="relative flex items-center justify-center gap-3 text-lg uppercase tracking-wider">
-                ➕ PUBLIER L'ÉVÉNEMENT
+                PUBLIER L'ÉVÉNEMENT
             </span>
         </button>
     </form>
 </div>
 
 <script>
-function previewImage(event, previewId) {
-    const reader = new FileReader();
-    const preview = document.getElementById(previewId);
-    reader.onload = () => {
-        preview.src = reader.result;
-        preview.classList.remove('opacity-80');
-        preview.parentElement.classList.add('border-primary/50');
+    function previewImage(event, previewId) {
+        const reader = new FileReader();
+        const preview = document.getElementById(previewId);
+        reader.onload = () => {
+            preview.src = reader.result;
+            preview.classList.remove('opacity-80');
+            preview.parentElement.classList.add('border-primary/50');
+        }
+        reader.readAsDataURL(event.target.files[0]);
     }
-    reader.readAsDataURL(event.target.files[0]);
-}
 </script>
 
 <style>
