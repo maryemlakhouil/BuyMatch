@@ -47,6 +47,7 @@ class Organisateur extends User {
     // 2 - Statistiques des matchs 
 
     public function consulterStatistiques(): array {
+
         $stmt = $this->db->prepare("
             SELECT 
                 m.id AS match_id,
@@ -65,8 +66,9 @@ class Organisateur extends User {
     }
 
     // 3 - Avis et commentaires pour un match spécifique
-    
+
     public function consulterAvis(int $matchId): array {
+
         $stmt = $this->db->prepare("
             SELECT u.nom, c.contenu, c.note, c.date_commentaire
             FROM commentaires c
@@ -77,6 +79,5 @@ class Organisateur extends User {
         $stmt->execute([$matchId]);
         return $stmt->fetchAll();
     }
-
-   
+    
 }
