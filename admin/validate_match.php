@@ -7,6 +7,7 @@ require_once "../classes/Admin.php";
 $db = Database::connect();
 
 /* Infos admin */
+
 $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
