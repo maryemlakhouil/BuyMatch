@@ -71,10 +71,47 @@ class Admin extends User {
         return $stmt->fetchAll();
     }
 
+    // 5 - desactiver/activer Utilisateur 
 
-    // 5 - Activer / désactiver un utilisateur
-    public function changerStatutUtilisateur(int $userId, bool $actif): bool {
-        return false;
+    public function desactiverUtilisateur(int $userId): bool{
+
+        $stmt = $this->db->prepare("
+            UPDATE users
+            SET is_active = 0
+            WHERE id = ?
+        ");
+
+        return $stmt->execute([$userId]);
+    }
+
+    public function activerUtilisateur(int $userId): bool{
+
+        $stmt = $this->db->prepare("
+            UPDATE users
+            SET is_active = 1
+            WHERE id = ?
+        ");
+
+        return $stmt->execute([$userId]);
+    }
+
+    // 6 - changer role d'un utilisateur 
+
+    public function changerRole(int $userId, string $nouveauRole): bool{
+
+        $rolesAutorises = ['acheteur', 'organisateur'];
+
+        if (!in_array($nouveauRole, $rolesAutorises)) {
+            return false;
+        }
+
+        $stmt = $this->db->prepare("
+            UPDATE users
+            SET role = ?
+            WHERE id = ?
+        ");
+
+        return $stmt->execute([$nouveauRole, $userId]);
     }
 
     // 6 -  Supprimer un commentaire
