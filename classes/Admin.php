@@ -115,13 +115,35 @@ class Admin extends User {
     }
 
     // 6 -  Supprimer un commentaire
-    public function supprimerCommentaire(int $commentId): bool {
-        return false;
+    public function supprimerCommentaire(int $commentaireId): bool {
+        $stmt = $this->db->prepare("
+        delete from commantairses where id = ?");
+        return $stmt->execute([$commentaireId]);
     }
-
 
     // 7 - Statistiques globales
     public function statistiquesGlobales(): array {
-        return [];
+
+        $stats = [];
+
+        // total d'utilisateurs 
+        $stmt = $this->db->query(" SELECT COUNT(*) FROM users");
+        $stats['users'] = $stmt->fetchColumn();
+
+        // total des matches 
+        $stmt = $this->db->query(" SELECT COUNT(*) FROM matches");
+        $stats['matches'] = $stmt->fetchColumn();
+
+        // total billets vendus
+        $stmt = $this->db->query("SELECT COUNT(*) FROM billets");
+        $stats['billets'] =$stmt->fetchColumn();
+
+        // chiffres affaires 
+        $stmt = $this->db->query("SELECT IFNULL(SUM(prix),0) FROM billets");
+        $stats['chiffre_affaires'] = $stmt->fetchColumn();
+
+        return $stats;
     }
+
+
 }
