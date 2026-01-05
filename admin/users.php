@@ -1,51 +1,51 @@
 <?php
-session_start();
+    session_start();
 
-require_once "../config/database.php";
-require_once "../classes/Admin.php";
+    require_once "../config/database.php";
+    require_once "../classes/Admin.php";
 
-/* Sécurité */
-// if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-//     header("Location: ../auth/login.php");
-//     exit;
-// }
+    /* Sécurité */
+    // if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    //     header("Location: ../auth/login.php");
+    //     exit;
+    // }
 
-$db = Database::connect();
+    $db = Database::connect();
 
-/* Infos admin */
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+    /* Infos admin */
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
 
-if (!$user) {
-    die("Admin introuvable");
-}
+    if (!$user) {
+        die("Admin introuvable");
+    }
 
-/* Objet Admin */
-$admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
+    /* Objet Admin */
+    $admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
 
-/* Actions */
+    /* Actions */
 
-if (isset($_GET['toggle'])) {
-    $admin->changerStatutUtilisateur(
-        (int) $_GET['toggle'],
-        (bool) $_GET['statut']
-    );
-}
+    if (isset($_GET['toggle'])) {
+        $admin->changerStatutUtilisateur(
+            (int) $_GET['toggle'],
+            (bool) $_GET['statut']
+        );
+    }
 
-if (isset($_GET['delete'])) {
-    $admin->supprimerUtilisateur((int) $_GET['delete']);
-}
+    if (isset($_GET['delete'])) {
+        $admin->supprimerUtilisateur((int) $_GET['delete']);
+    }
 
-/* Liste utilisateurs */
-$utilisateurs = $admin->listerUtilisateurs();
+    /* Liste utilisateurs */
+    $utilisateurs = $admin->listerUtilisateurs();
 
-if (isset($_GET['role'], $_GET['id'])) {
-    $admin->changerRoleUtilisateur(
-        (int) $_GET['id'],
-        $_GET['role']
-    );
-}
+    if (isset($_GET['role'], $_GET['id'])) {
+        $admin->changerRoleUtilisateur(
+            (int) $_GET['id'],
+            $_GET['role']
+        );
+    }
 
 ?>
 
@@ -73,7 +73,7 @@ if (isset($_GET['role'], $_GET['id'])) {
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
             <div>
-                <a href="dashboard.php" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 mb-2 transition-colors">
+                <a href="dashbord.php" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 mb-2 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     Retour au Dashboard
                 </a>
