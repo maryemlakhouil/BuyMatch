@@ -115,6 +115,7 @@ class Admin extends User {
     }
 
     // 6 -  Supprimer un commentaire
+
     public function supprimerCommentaire(int $commentaireId): bool {
         $stmt = $this->db->prepare("
         delete from commantairses where id = ?");
@@ -122,10 +123,10 @@ class Admin extends User {
     }
 
     // 7 - Statistiques globales
+
     public function statistiquesGlobales(): array {
 
         $stats = [];
-
         // total d'utilisateurs 
         $stmt = $this->db->query(" SELECT COUNT(*) FROM users");
         $stats['users'] = $stmt->fetchColumn();

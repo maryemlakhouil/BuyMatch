@@ -1,0 +1,138 @@
+<?php
+    session_start();
+    require_once "../config/database.php";
+    require_once "../classes/Admin.php";
+
+    // Sécurité
+    // if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    //     header("Location: ../auth/login.php");
+    //     exit;
+    // }
+
+    $db = Database::connect();
+
+    /* Infos admin */
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        die("Administrateur introuvable");
+    }
+
+    /* Objet Admin */
+    $admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
+
+    /* Statistiques globales */
+    $stats = $admin->statistiquesGlobales();
+?>
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin | BuyMatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-gray-900 text-white flex flex-col">
+        <div class="p-6 text-2xl font-bold border-b border-gray-700">
+            BuyMatch Admin
+        </div>
+
+        <nav class="flex-1 p-4 space-y-3">
+            <a href="dashboard.php" class="block px-4 py-2 rounded bg-gray-700">
+                 Dashboard
+            </a>
+            <a href="users.php" class="block px-4 py-2 rounded hover:bg-gray-700">
+                 Utilisateurs
+            </a>
+            <a href="validate_match.php" class="block px-4 py-2 rounded hover:bg-gray-700">
+                 Matchs
+            </a>
+            <a href="commentaires.php" class="block px-4 py-2 rounded hover:bg-gray-700">
+                 Commentaires
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-gray-700">
+            <a href="../auth/logout.php"
+               class="block text-center bg-red-600 py-2 rounded">
+                Déconnexion
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 p-8">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">
+                    Bienvenue <?= htmlspecialchars($user['nom']) ?>
+                </h1>
+                <p class="text-gray-500">Rôle : Administrateur</p>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <p class="text-gray-500">Utilisateurs</p>
+                <p class="text-3xl font-bold text-indigo-600"><?= $stats['users'] ?></p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <p class="text-gray-500">Matchs</p>
+                <p class="text-3xl font-bold text-green-600"><?= $stats['matches'] ?></p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <p class="text-gray-500">Billets vendus</p>
+                <p class="text-3xl font-bold text-blue-600"><?= $stats['billets'] ?></p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <p class="text-gray-500">Chiffre d'affaires</p>
+                <p class="text-3xl font-bold text-yellow-600">
+                    <?= number_format($stats['chiffre_affaires'], 2) ?> €
+                </p>
+            </div>
+
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <h2 class="text-xl font-semibold mb-4">Actions rapides</h2>
+
+            <div class="flex flex-wrap gap-4">
+                <a href="users.php"
+                   class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">
+                     Gérer utilisateurs
+                </a>
+
+                <a href="validate_match.php"
+                   class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                     Valider matchs
+                </a>
+
+                <a href="commentaires.php"
+                   class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600">
+                     Modérer commentaires
+                </a>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>
