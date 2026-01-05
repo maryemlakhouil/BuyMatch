@@ -32,7 +32,46 @@ class Admin extends User {
         return $stmt->fetchAll();
     }
 
+    // 2 - lister tous les matches 
+    public function listerTousLesMatchs(): array{
+        
+        $stmt = $this->db->prepare("
+            SELECT 
+                m.id,
+                m.equipe1,
+                m.equipe2,
+                m.date_heure,
+                m.statut,
+                u.nom AS organisateur
+            FROM matches m
+            JOIN users u ON m.organisateur_id = u.id
+            ORDER BY m.date_heure DESC
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+
     // 2- Valider / refuser un match
+
+    public function validerMatch(int $matchId): bool{
+        $stmt = $this->db->prepare("
+            UPDATE matches
+            SET statut = 'valide'
+            WHERE id = ?
+        ");
+        return $stmt->execute([$matchId]);
+    }
+
+    public function refuserMatch(int $matchId): bool{
+        $stmt = $this->db->prepare("
+            UPDATE matches
+            SET statut = 'refuse'
+            WHERE id = ?
+        ");
+        return $stmt->execute([$matchId]);
+        }
+
 
     public function changerStatutMatch(int $matchId, string $statut): bool {
 
@@ -97,7 +136,7 @@ class Admin extends User {
 
     // 7 - changer role d'un utilisateur 
 
-    public function changerRole(int $userId, string $nouveauRole): bool{
+    public function changerRoleUtilisateur(int $userId, string $nouveauRole): bool{
 
         $rolesAutorises = ['acheteur', 'organisateur'];
 
@@ -152,5 +191,7 @@ class Admin extends User {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
+
 
 }
