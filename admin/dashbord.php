@@ -17,10 +17,10 @@
     $user = $stmt->fetch();
 
     if (!$user) {
-        die("Administrateur introuvable");
+        die("Administrateur introuvable !! ");
     }
 
-    /* Objet Admin */
+    // Objet Admin 
     $admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
 
     /* Statistiques globales */
@@ -46,16 +46,16 @@
         </div>
 
         <nav class="flex-1 p-4 space-y-3">
-            <a href="dashboard.php" class="block px-4 py-2 rounded bg-gray-700">
+            <a href="../admin/dashbord.php" class="block px-4 py-2 rounded bg-gray-700">
                  Dashboard
             </a>
-            <a href="users.php" class="block px-4 py-2 rounded hover:bg-gray-700">
+            <a href="../admin/users.php" class="block px-4 py-2 rounded hover:bg-gray-700">
                  Utilisateurs
             </a>
-            <a href="validate_match.php" class="block px-4 py-2 rounded hover:bg-gray-700">
+            <a href="../admin/validate_match.php" class="block px-4 py-2 rounded hover:bg-gray-700">
                  Matchs
             </a>
-            <a href="commentaires.php" class="block px-4 py-2 rounded hover:bg-gray-700">
+            <a href="../admin/comments.php" class="block px-4 py-2 rounded hover:bg-gray-700">
                  Commentaires
             </a>
         </nav>
@@ -95,7 +95,7 @@
 
         <div class="bg-white p-6 rounded-xl shadow text-center">
             <h3 class="text-gray-500">Chiffre d'affaires</h3>
-            <p class="text-3xl font-bold text-blue-600"><?= number_format($stats['chiffre_affaires'], 2) ?> €</p>
+            <p class="text-3xl font-bold text-blue-600"><?= number_format($stats['chiffre_affaires'], 2) ?> DH</p>
         </div>
 
         <div class="bg-white p-6 rounded-xl shadow text-center">
