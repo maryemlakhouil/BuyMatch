@@ -139,3 +139,8 @@ INSERT INTO commentaires (user_id, match_id, contenu, note) VALUES (1, 1, 'Match
 UPDATE users
 SET password = '$2y$10$BAP2TPVnY6UN6FYSI/yJ7OeKvSWIbDsPLWJm5D4oPgUJMrY1ViNPO'
 WHERE email = 'amin@gmail.com';
+
+/* modifier la table matches */
+
+ALTER TABLE matches ADD raison_refus TEXT NULL;
+

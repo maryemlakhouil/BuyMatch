@@ -33,6 +33,7 @@ class Admin extends User {
     }
 
     // 2- Valider un match
+
     public function validerMatch(int $matchId): bool {
 
         $stmt = $this->pd->prepare("
@@ -45,14 +46,31 @@ class Admin extends User {
     }
 
     // 3- Refuser / supprimer un match
-    public function refuserMatch(int $matchId): bool {
-        return false;
+
+    public function refuserMatch(int $matchId , ?string $raison =null): bool {
+
+        $stmt = $this->db->prepare("
+            update matches
+            set statut ='refuse' ,raison_refus =?
+            where id=? and statut ='en_attente'
+        ");
+        $stmt->execute([$raison,$matchId]);
+        return $stmt->rowCount()>0;
     }
 
     // 4- Lister tous les utilisateurs
+
     public function listerUtilisateurs(): array {
-        return [];
+
+        $stmt = $this->db->prepare("
+            select id,nom,email,role,is_active,date_creation
+            from users
+            order by date_creation desc
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
+
 
     // 5 - Activer / désactiver un utilisateur
     public function changerStatutUtilisateur(int $userId, bool $actif): bool {
