@@ -29,35 +29,26 @@ class Admin extends User {
         ");
         $stmt->execute();
 
-        return $stmt->fetchAll;
+        return $stmt->fetchAll();
     }
 
-    // 2- Valider un match
+    // 2- Valider / refuser un match
 
-    public function validerMatch(int $matchId): bool {
+    public function changerStatutMatch(int $matchId, string $statut): bool {
 
-        $stmt = $this->pd->prepare("
-            update matches 
-            set statut ='valide'
-            where id = ? and statut='en_attente'
-        ");
-        $stmt->execute([$matchId]);
-        return $stmt->rowCount()>0;
-    }
-
-    // 3- Refuser / supprimer un match
-
-    public function refuserMatch(int $matchId , ?string $raison =null): bool {
+        // Sécurité : statut autorisé uniquement
+        if (!in_array($statut, ['valide', 'refuse'])) {
+            return false;
+        }
 
         $stmt = $this->db->prepare("
-            update matches
-            set statut ='refuse' ,raison_refus =?
-            where id=? and statut ='en_attente'
+            UPDATE matches
+            SET statut = ?
+            WHERE id = ?
         ");
-        $stmt->execute([$raison,$matchId]);
-        return $stmt->rowCount()>0;
-    }
 
+        return $stmt->execute([$statut, $matchId]);
+    }
     // 4- Lister tous les utilisateurs
 
     public function listerUtilisateurs(): array {
@@ -73,22 +64,32 @@ class Admin extends User {
 
     // 5 - desactiver/activer Utilisateur 
 
-    public function desactiverUtilisateur(int $userId): bool{
+    public function changerStatutUtilisateur(int $userId, bool $statut): bool {
+
+        //  l'admin ne peut pas se désactiver
+        if ($userId === $this->id) {
+            return false;
+        }
 
         $stmt = $this->db->prepare("
             UPDATE users
-            SET is_active = 0
+            SET est_actif = ?
             WHERE id = ?
         ");
 
-        return $stmt->execute([$userId]);
+        return $stmt->execute([$statut ? 1 : 0, $userId]);
     }
+     // supprimer Un utilisateur 
 
-    public function activerUtilisateur(int $userId): bool{
+    public function supprimerUtilisateur(int $userId): bool {
+
+        // l'admin ne peut pas se supprimer
+        if ($userId === $this->id) {
+            return false;
+        }
 
         $stmt = $this->db->prepare("
-            UPDATE users
-            SET is_active = 1
+            DELETE FROM users
             WHERE id = ?
         ");
 

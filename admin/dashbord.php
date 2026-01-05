@@ -12,7 +12,7 @@
     $db = Database::connect();
 
     /* Infos admin */
-    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ? ");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
 
@@ -103,7 +103,7 @@
             <div class="bg-white p-6 rounded-xl shadow">
                 <p class="text-gray-500">Chiffre d'affaires</p>
                 <p class="text-3xl font-bold text-yellow-600">
-                    <?= number_format($stats['chiffre_affaires'], 2) ?> €
+                    <?= number_format($stats['chiffre_affaires'], 2) ?> DH
                 </p>
             </div>
 
