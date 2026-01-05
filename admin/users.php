@@ -55,7 +55,7 @@ $utilisateurs = $admin->listerUtilisateurs();
 <body class="bg-gray-100 p-8">
 
 <h1 class="text-3xl font-bold text-indigo-700 mb-8">
-    👥 Gestion des utilisateurs
+     Gestion des utilisateurs
 </h1>
 
 <div class="bg-white rounded-xl shadow overflow-x-auto">
@@ -78,15 +78,15 @@ $utilisateurs = $admin->listerUtilisateurs();
                 <?= ucfirst($u['role']) ?>
             </td>
             <td class="p-3">
-                <?= $u['est_actif'] ? '🟢 Actif' : '🔴 Inactif' ?>
+                <?= $u['is_active'] ? '🟢 Actif' : '🔴 Inactif' ?>
             </td>
             <td class="p-3 space-x-2">
 
                 <?php if ($u['id'] !== $_SESSION['user_id']): ?>
 
-                    <a href="?toggle=<?= $u['id'] ?>&statut=<?= $u['est_actif'] ? 0 : 1 ?>"
+                    <a href="?toggle=<?= $u['id'] ?>&statut=<?= $u['is_active'] ? 0 : 1 ?>"
                        class="px-3 py-1 rounded bg-yellow-400 text-white">
-                        <?= $u['est_actif'] ? 'Désactiver' : 'Activer' ?>
+                        <?= $u['is_active'] ? 'Désactiver' : 'Activer' ?>
                     </a>
 
                     <a href="?delete=<?= $u['id'] ?>"

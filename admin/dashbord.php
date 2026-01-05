@@ -27,7 +27,6 @@
     $stats = $admin->statistiquesGlobales();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -82,54 +81,29 @@
             </div>
         </div>
 
-        <!-- STATS -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <!-- STATS --><div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
 
-            <div class="bg-white p-6 rounded-xl shadow">
-                <p class="text-gray-500">Utilisateurs</p>
-                <p class="text-3xl font-bold text-indigo-600"><?= $stats['users'] ?></p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow">
-                <p class="text-gray-500">Matchs</p>
-                <p class="text-3xl font-bold text-green-600"><?= $stats['matches'] ?></p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow">
-                <p class="text-gray-500">Billets vendus</p>
-                <p class="text-3xl font-bold text-blue-600"><?= $stats['billets'] ?></p>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow">
-                <p class="text-gray-500">Chiffre d'affaires</p>
-                <p class="text-3xl font-bold text-yellow-600">
-                    <?= number_format($stats['chiffre_affaires'], 2) ?> DH
-                </p>
-            </div>
-
+        <div class="bg-white p-6 rounded-xl shadow text-center">
+            <h3 class="text-gray-500">Matchs créés</h3>
+            <p class="text-3xl font-bold text-indigo-600"><?= $stats['total_matchs'] ?></p>
         </div>
 
-        <!-- ACTIONS -->
-        <div class="bg-white p-6 rounded-xl shadow">
-            <h2 class="text-xl font-semibold mb-4">Actions rapides</h2>
-
-            <div class="flex flex-wrap gap-4">
-                <a href="users.php"
-                   class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">
-                     Gérer utilisateurs
-                </a>
-
-                <a href="validate_match.php"
-                   class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
-                     Valider matchs
-                </a>
-
-                <a href="commentaires.php"
-                   class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600">
-                     Modérer commentaires
-                </a>
-            </div>
+        <div class="bg-white p-6 rounded-xl shadow text-center">
+            <h3 class="text-gray-500">Billets vendus</h3>
+            <p class="text-3xl font-bold text-green-600"><?= $stats['total_billets'] ?></p>
         </div>
+
+        <div class="bg-white p-6 rounded-xl shadow text-center">
+            <h3 class="text-gray-500">Chiffre d'affaires</h3>
+            <p class="text-3xl font-bold text-blue-600"><?= number_format($stats['chiffre_affaires'], 2) ?> €</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow text-center">
+            <h3 class="text-gray-500">Utilisateurs</h3>
+            <p class="text-3xl font-bold text-purple-600"><?= $stats['total_utilisateurs'] ?></p>
+        </div>
+
+    </div>
 
     </main>
 </div>

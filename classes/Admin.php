@@ -36,7 +36,6 @@ class Admin extends User {
 
     public function changerStatutMatch(int $matchId, string $statut): bool {
 
-        // Sécurité : statut autorisé uniquement
         if (!in_array($statut, ['valide', 'refuse'])) {
             return false;
         }
@@ -49,6 +48,7 @@ class Admin extends User {
 
         return $stmt->execute([$statut, $matchId]);
     }
+
     // 4- Lister tous les utilisateurs
 
     public function listerUtilisateurs(): array {
@@ -66,24 +66,23 @@ class Admin extends User {
 
     public function changerStatutUtilisateur(int $userId, bool $statut): bool {
 
-        //  l'admin ne peut pas se désactiver
         if ($userId === $this->id) {
             return false;
         }
 
         $stmt = $this->db->prepare("
             UPDATE users
-            SET est_actif = ?
+            SET is_active = ?
             WHERE id = ?
         ");
 
-        return $stmt->execute([$statut ? 1 : 0, $userId]);
+        return $stmt->execute([$userId,$statut ? 1 : 0]);
     }
-     // supprimer Un utilisateur 
+
+    // 6 - supprimer Un utilisateur 
 
     public function supprimerUtilisateur(int $userId): bool {
 
-        // l'admin ne peut pas se supprimer
         if ($userId === $this->id) {
             return false;
         }
@@ -96,7 +95,7 @@ class Admin extends User {
         return $stmt->execute([$userId]);
     }
 
-    // 6 - changer role d'un utilisateur 
+    // 7 - changer role d'un utilisateur 
 
     public function changerRole(int $userId, string $nouveauRole): bool{
 
@@ -115,7 +114,7 @@ class Admin extends User {
         return $stmt->execute([$nouveauRole, $userId]);
     }
 
-    // 6 -  Supprimer un commentaire
+    // 8 -  Supprimer un commentaire
 
     public function supprimerCommentaire(int $commentaireId): bool {
         $stmt = $this->db->prepare("
@@ -123,29 +122,35 @@ class Admin extends User {
         return $stmt->execute([$commentaireId]);
     }
 
-    // 7 - Statistiques globales
-
+    // 9 - Statistiques globales
+  
     public function statistiquesGlobales(): array {
 
-        $stats = [];
-        // total d'utilisateurs 
-        $stmt = $this->db->query(" SELECT COUNT(*) FROM users");
-        $stats['users'] = $stmt->fetchColumn();
-
-        // total des matches 
-        $stmt = $this->db->query(" SELECT COUNT(*) FROM matches");
-        $stats['matches'] = $stmt->fetchColumn();
-
-        // total billets vendus
-        $stmt = $this->db->query("SELECT COUNT(*) FROM billets");
-        $stats['billets'] =$stmt->fetchColumn();
-
-        // chiffres affaires 
-        $stmt = $this->db->query("SELECT IFNULL(SUM(prix),0) FROM billets");
-        $stats['chiffre_affaires'] = $stmt->fetchColumn();
-
-        return $stats;
+        $stmt = $this->db->query("
+            SELECT 
+                (SELECT COUNT(*) FROM matches) AS total_matchs,
+                (SELECT COUNT(*) FROM billets) AS total_billets,
+                (SELECT IFNULL(SUM(prix),0) FROM billets) AS chiffre_affaires,
+                (SELECT COUNT(*) FROM users) AS total_utilisateurs
+            ");
+        return $stmt->fetch();
     }
 
+    // 10 - lister les commantaires 
+
+    public function listerCommentaires(): array {
+
+        $stmt = $this->db->prepare("
+            SELECT c.id, c.contenu, c.note, c.date_commentaire,
+                u.nom AS utilisateur, m.equipe1, m.equipe2
+            FROM commentaires c
+            JOIN users u ON c.user_id = u.id
+            JOIN matches m ON c.match_id = m.id
+            ORDER BY c.date_commentaire DESC
+        ");
+
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 
 }
