@@ -1,35 +1,37 @@
 <?php
-session_start();
+    session_start();
 
-require_once "../config/database.php";
-require_once "../classes/Admin.php";
+    require_once "../config/database.php";
+    require_once "../classes/Admin.php";
 
-$db = Database::connect();
+    $db = Database::connect();
 
-/* Infos admin */
+    /* Infos admin */
 
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
 
-if (!$user) {
-    die("Admin introuvable");
-}
+    if (!$user) {
+        die("Admin introuvable");
+    }
 
-/* Objet Admin */
-$admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
+    /* Objet Admin */
+    $admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
 
-/* Traitement action */
-if (isset($_POST['match_id'], $_POST['action'])) {
-    $matchId = (int) $_POST['match_id'];
-    $action  = $_POST['action'];
+    /* Traitement action */
+    if (isset($_POST['match_id'], $_POST['action'])) {
+        $matchId = (int) $_POST['match_id'];
+        $action  = $_POST['action'];
 
-    $admin->changerStatutMatch($matchId, $action);
-}
+        $admin->changerStatutMatch($matchId, $action);
+    }
 
-/* Matchs en attente */
-$matchs = $admin->listerMatchsEnAttente();
+    /* Matchs en attente */
+    $matchs = $admin->listerMatchsEnAttente();
 ?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -73,7 +75,7 @@ $matchs = $admin->listerMatchsEnAttente();
 <div class="max-w-6xl mx-auto">
     <!-- Ajout du bouton retour au dashboard -->
     <div class="mb-8 flex items-center justify-between">
-        <a href="dashboard.php" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
+        <a href="dashbord.php" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
