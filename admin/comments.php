@@ -26,6 +26,7 @@ if (isset($_GET['delete'])) {
 
 /* Liste commentaires */
 $commentaires = $admin->listerCommentaires();
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -37,7 +38,7 @@ $commentaires = $admin->listerCommentaires();
 <body class="bg-gray-100 p-8">
 
 <h1 class="text-3xl font-bold text-indigo-700 mb-8">
-    💬 Modération des commentaires
+     Modération des commentaires
 </h1>
 
 <div class="bg-white rounded-xl shadow overflow-x-auto">

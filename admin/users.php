@@ -22,14 +22,10 @@ if (!$user) {
 }
 
 /* Objet Admin */
-$admin = new Admin(
-    $_SESSION['user_id'],
-    $user['nom'],
-    $user['email'],
-    ''
-);
+$admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
 
 /* Actions */
+
 if (isset($_GET['toggle'])) {
     $admin->changerStatutUtilisateur(
         (int) $_GET['toggle'],

@@ -16,12 +16,7 @@ if (!$user) {
 }
 
 /* Objet Admin */
-$admin = new Admin(
-    $_SESSION['user_id'],
-    $user['nom'],
-    $user['email'],
-    ''
-);
+$admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
 
 /* Traitement action */
 if (isset($_POST['match_id'], $_POST['action'])) {
@@ -47,12 +42,12 @@ $matchs = $admin->listerMatchsEnAttente();
 <div class="max-w-6xl mx-auto py-10">
 
     <h1 class="text-3xl font-bold text-gray-800 mb-8">
-        ⚽ Validation des matchs
+         Validation des matchs
     </h1>
 
     <?php if (empty($matchs)): ?>
         <div class="bg-green-100 text-green-700 p-4 rounded-lg">
-            Aucun match en attente 🎉
+            Aucun match en attente 
         </div>
     <?php else: ?>
 
