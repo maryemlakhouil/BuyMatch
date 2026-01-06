@@ -28,7 +28,7 @@ class Acheteur extends User{
     /* ------------------ BILLETS ------------------ */
 
     public function billetsAchetes(){
-        
+
         $stmt = $this->db->prepare("
             SELECT b.*, m.equipe1, m.equipe2, m.date_heure
             FROM billets b
@@ -42,17 +42,12 @@ class Acheteur extends User{
 
     /* ------------------ AVIS ------------------ */
 
-    public function ajouterAvis($matchId, $note, $contenu)
-    {
+    public function ajouterAvis($matchId, $note, $contenu){
+
         $stmt = $this->db->prepare("
             INSERT INTO commentaires (user_id, match_id, note, contenu)
             VALUES (?, ?, ?, ?)
         ");
-        return $stmt->execute([
-            $this->id,
-            $matchId,
-            $note,
-            $contenu
-        ]);
+        return $stmt->execute([$this->id,$matchId,$note,$contenu]);
     }
 }
