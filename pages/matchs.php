@@ -5,6 +5,7 @@ require_once "../config/database.php";
 require_once "../classes/Acheteur.php";
 
 /* Sécurité */
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'acheteur') {
     header("Location: ../auth/login.php");
     exit;
@@ -13,6 +14,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'acheteur') {
 $db = Database::connect();
 
 /* Infos acheteur */
+
 $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
