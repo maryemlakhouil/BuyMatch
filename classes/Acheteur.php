@@ -14,7 +14,7 @@ class Acheteur extends User{
     /* ------------------   MATCHS  ------------------ */
 
     public function listerMatchsDisponibles(){
-        
+
         $stmt = $this->db->query("
             SELECT *
             FROM matches
@@ -27,8 +27,8 @@ class Acheteur extends User{
 
     /* ------------------ BILLETS ------------------ */
 
-    public function billetsAchetes()
-    {
+    public function billetsAchetes(){
+        
         $stmt = $this->db->prepare("
             SELECT b.*, m.equipe1, m.equipe2, m.date_heure
             FROM billets b
