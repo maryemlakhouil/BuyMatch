@@ -6,7 +6,7 @@ class Acheteur extends User{
 
     protected $db;
 
-    public function __construct($id, $nom, $email){
+    public function __construct(int $id, string $nom, string $email) {
         parent::__construct($id, $nom, $email, 'acheteur');
         $this->db = Database::connect();
     }

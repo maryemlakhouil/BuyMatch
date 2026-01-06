@@ -1,105 +1,93 @@
 <?php
-session_start();
 
-require_once "../config/database.php";
-require_once "../classes/Acheteur.php";
+    session_start();
+    require_once "../config/database.php";
+    require_once "../classes/User.php";
+    require_once "../classes/Acheteur.php";
 
-/* Sécurité */
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'acheteur') {
-    header("Location: ../auth/login.php");
-    exit;
-}
+    // Vérifier authentification
 
-if (!isset($_GET['id'])) {
-    die("Match non spécifié");
-}
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: ../auth/login.php");
+        exit;
+    }
 
-$db = Database::connect();
+    // Connexion DB
+    $db = Database::connect();
 
-/* Infos acheteur */
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+    // Récupérer infos utilisateur depuis DB
+    
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
 
-if (!$user) {
-    die("Acheteur introuvable");
-}
+    if (!$user) {
+        die("Utilisateur introuvable !! ");
+    }
 
-/* Objet Acheteur */
-$acheteur = new Acheteur(
-    $_SESSION['user_id'],
-    $user['nom'],
-    $user['email']
-);
+    // Créer objet 
+    $acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email']);
 
-/* Match */
-$match = $acheteur->getMatch((int) $_GET['id']);
-if (!$match) {
-    die("Match introuvable ou non disponible");
-}
+    // Vérifier paramètre id
 
-/* Catégories */
-$categories = $acheteur->getCategoriesMatch($match['id']);
+    $matchId = $_GET['id'] ?? null;
+    if (!$matchId || !is_numeric($matchId)) {
+        $error = "Match invalide.";
+        $match = null;
+    } else {
+        // Récupérer match
+        $match = $acheteur->getMatchById((int)$matchId);
+        if (!$match) {
+            $error = "Match introuvable ou non disponible.";
+        }
+    }
+
+    // Récupérer catégories si match existant
+    $categories = $match ? $acheteur->getCategoriesMatch($matchId) : [];
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Détails du match</title>
+    <title>Détails du match | BuyMatch</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #e5e7eb; }
+        .glass-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="min-h-screen p-8">
 
-<div class="max-w-4xl mx-auto p-6">
+<a href="matchs.php" class="text-indigo-400 hover:text-indigo-300 mb-8 inline-block">← Retour aux matchs</a>
 
-    <!-- Match -->
-    <div class="bg-white rounded shadow p-6 mb-6">
-        <h1 class="text-3xl font-bold mb-2">
-            <?= htmlspecialchars($match['equipe1']) ?> 
-            <span class="text-gray-400">vs</span> 
-            <?= htmlspecialchars($match['equipe2']) ?>
-        </h1>
-
-        <p class="text-gray-600">
-             <?= htmlspecialchars($match['lieu']) ?><br>
-             <?= date('d/m/Y H:i', strtotime($match['date_heure'])) ?>
-        </p>
+<?php if(isset($error)): ?>
+    <div class="glass-card p-6 rounded-xl text-center text-red-400 font-bold">
+        <?= htmlspecialchars($error) ?>
+    </div>
+<?php else: ?>
+    <div class="glass-card p-8 rounded-2xl mb-8">
+        <h1 class="text-3xl font-bold mb-4"><?= htmlspecialchars($match['equipe1']) ?> vs <?= htmlspecialchars($match['equipe2']) ?></h1>
+        <p class="text-gray-400 mb-2">Lieu : <?= htmlspecialchars($match['lieu']) ?></p>
+        <p class="text-gray-400 mb-2">Date & Heure : <?= date('d M Y H:i', strtotime($match['date_heure'])) ?></p>
     </div>
 
-    <!-- Catégories -->
-    <div class="bg-white rounded shadow p-6">
-        <h2 class="text-xl font-semibold mb-4">Catégories disponibles</h2>
-
-        <?php if (empty($categories)): ?>
-            <p class="text-gray-500 italic">Aucune catégorie disponible.</p>
+    <div class="glass-card p-6 rounded-2xl">
+        <h2 class="text-xl font-bold mb-4">Catégories disponibles</h2>
+        <?php if(empty($categories)): ?>
+            <p class="text-gray-400">Aucune catégorie disponible pour ce match.</p>
+        <?php else: ?>
+            <ul class="space-y-3">
+                <?php foreach($categories as $cat): ?>
+                    <li class="p-4 bg-white/5 rounded-xl flex justify-between items-center">
+                        <span><?= htmlspecialchars($cat['nom']) ?> - <?= number_format($cat['prix'],2) ?> DH</span>
+                        <span class="text-sm text-gray-400"><?= $cat['nb_places'] ?> places</span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
         <?php endif; ?>
-
-        <?php foreach ($categories as $cat): ?>
-            <div class="border rounded p-4 mb-4 flex justify-between items-center">
-                <div>
-                    <p class="font-bold"><?= htmlspecialchars($cat['nom']) ?></p>
-                    <p class="text-sm text-gray-600">
-                        Prix : <?= number_format($cat['prix'], 2) ?> DH<br>
-                        Places restantes : <?= $cat['nb_places'] ?>
-                    </p>
-                </div>
-
-                <div>
-                    <?php if ($cat['nb_places'] > 0): ?>
-                        <a href="buy_ticket.php?category=<?= $cat['id'] ?>&match=<?= $match['id'] ?>"
-                           class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                            Acheter
-                        </a>
-                    <?php else: ?>
-                        <span class="text-red-500 font-semibold">Complet</span>
-                    <?php endif; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
     </div>
-
-</div>
+<?php endif; ?>
 
 </body>
 </html>
