@@ -50,4 +50,35 @@ class Acheteur extends User{
         ");
         return $stmt->execute([$this->id,$matchId,$note,$contenu]);
     }
+    
+    /*------------ Recuperer Match Par ID ---------------- */
+
+    public function getMatch(int $matchId){
+            
+        $stmt = $this->db->prepare("
+            SELECT *
+            FROM matches
+            WHERE id = ?
+            AND statut = 'valide'
+        ");
+        $stmt->execute([$matchId]);
+        return $stmt->fetch();
+    }
+
+    /*-------------- Recuperer categorie d'un match -----------*/
+
+    public function getCategoriesMatch(int $matchId): array{
+
+        $stmt = $this->db->prepare("
+            SELECT id, nom, prix, nb_places
+            FROM categories
+            WHERE match_id = ?
+            ORDER BY prix ASC
+        ");
+        $stmt->execute([$matchId]);
+        return $stmt->fetchAll();
+    }
+    
+
+
 }
