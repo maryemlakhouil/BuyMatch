@@ -27,6 +27,7 @@ $acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email']);
 
 /* Vérifier match */
 $matchId = $_GET['match_id'] ?? null;
+
 if (!$matchId || !is_numeric($matchId)) {
     die("Match invalide");
 }
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $ticket = $acheteur->acheterBillet($matchId, $categorieId, $numeroPlace);
 
-        $success = "🎟️ Billet acheté avec succès ! Place n° {$ticket['numero_place']}";
+        $success = " Billet acheté avec succès ! Place n° {$ticket['numero_place']}";
 
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -98,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php if ($nbBillets >= 4): ?>
         <p class="text-yellow-400 font-bold">
-            Limite de 4 billets atteinte pour ce match.
+         Vous avez atteint la limite de 4 billets pour ce match.
         </p>
     <?php else: ?>
     <form method="POST" class="space-y-4">
@@ -126,6 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </form>
     <?php endif; ?>
+    <?php if ($success): ?>
+    <a href="ticket_print.php?ticket_id=<?= $ticket['id'] ?>"target="_blank"
+       class="block mt-4 bg-green-600 text-center py-3 rounded font-bold hover:bg-green-700">
+        Télécharger / Imprimer le billet
+    </a>
+<?php endif; ?>
+
 
 </div>
 

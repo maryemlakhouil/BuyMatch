@@ -1,4 +1,4 @@
-<!-- <?php
+<?php
 session_start();
 require_once "../config/database.php";
 require_once "../classes/User.php";
@@ -112,4 +112,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </div>
 
 </body>
-</html> -->
+</html> 

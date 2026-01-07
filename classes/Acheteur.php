@@ -6,7 +6,7 @@ class Acheteur extends User{
 
     protected $db;
 
-    public function __construct(int $id, string $nom, string $email) {
+    public function __construct($id, $nom, $email){
         parent::__construct($id, $nom, $email, 'acheteur');
         $this->db = Database::connect();
     }
@@ -34,7 +34,7 @@ class Acheteur extends User{
             FROM billets b
             JOIN matches m ON b.match_id = m.id
             JOIN categories c ON b.categorie_id = c.id
-            WHERE b.acheteur_id = ?
+            WHERE b.user_id = ?
             ORDER BY b.date_achat DESC
         ");
         $stmt->execute([$this->id]);
@@ -70,7 +70,7 @@ class Acheteur extends User{
     public function getCategoriesMatch(int $matchId): array{
 
         $stmt = $this->db->prepare("
-            SELECT id, nom, prix, places_disponibles    
+            SELECT id, nom, prix,nb_places    
             FROM categories
             WHERE match_id = ?
             ORDER BY prix ASC 
@@ -86,7 +86,7 @@ class Acheteur extends User{
         $stmt = $this->db->prepare("
             SELECT COUNT(*) 
             FROM billets
-            WHERE acheteur_id = ? AND match_id = ?
+            WHERE user_id = ? AND match_id = ?
         ");
         $stmt->execute([$this->id, $matchId]);
         return (int) $stmt->fetchColumn();
@@ -104,14 +104,14 @@ class Acheteur extends User{
         /* Vérifier catégorie */
 
         $stmt = $this->db->prepare("
-            SELECT prix, places_disponibles
+            SELECT prix, nb_places
             FROM categories 
             WHERE id = ? AND match_id = ?
         ");
         $stmt->execute([$categorieId, $matchId]);
         $categorie = $stmt->fetch();
 
-        if (!$categorie || $categorie['places_disponibles'] <= 0) {
+        if (!$categorie || $categorie['nb_places'] <= 0) {
             throw new Exception("Catégorie indisponible");
         }
 
@@ -138,27 +138,30 @@ class Acheteur extends User{
             /* Insertion billet */
             $stmt = $this->db->prepare("
                 INSERT INTO billets 
-                (acheteur_id, match_id, categorie_id, numero_place, prix, qr_token)
+                (user_id, match_id, categorie_id, numero_place, prix, qr_code)
                 VALUES (?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([$this->id,$matchId,$categorieId,$numeroPlace,$categorie['prix'],$qrToken]);
-
+            $ticketId = $this->db->lastInsertId();
             /* Décrément places */
             $stmt = $this->db->prepare("
                 UPDATE categories
-                SET places_disponibles = places_disponibles - 1
+                SET nb_places = nb_places - 1
                 WHERE id = ?
             ");
             $stmt->execute([$categorieId]);
 
             $this->db->commit();
 
-            return ['match_id' => $matchId,
-                    'categorie_id' => $categorieId,
-                    'numero_place' => $numeroPlace,
-                    'prix' => $categorie['prix'],
-                    'qr_token' => $qrToken
-                ];
+            return [
+                'id' => (int)$ticketId,
+                'match_id' => $matchId,
+                'categorie_id' => $categorieId,
+                'numero_place' => $numeroPlace,
+                'prix' => $categorie['prix'],
+                'qr_token' => $qrToken
+            ];
+
 
         } catch (Exception $e) {
             $this->db->rollBack();

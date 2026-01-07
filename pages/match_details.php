@@ -16,7 +16,7 @@
     $db = Database::connect();
 
     // Récupérer infos utilisateur depuis DB
-    
+
     $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
@@ -43,7 +43,7 @@
     }
 
     // Récupérer catégories si match existant
-    $categories = $match ? $acheteur->getCategoriesMatch($matchId) : [];
+    $categories = $match ? $acheteur->getCategoriesMatch($matchId) : [] ;
 ?>
 
 <!DOCTYPE html>
@@ -59,7 +59,10 @@
 </head>
 <body class="min-h-screen p-8">
 
-<a href="matchs.php" class="text-indigo-400 hover:text-indigo-300 mb-8 inline-block">← Retour aux matchs</a>
+<a href="buy_ticket.php?match_id=<?= $match['id'] ?>"
+   class="mt-6 inline-block bg-indigo-600 px-6 py-3 rounded font-bold hover:bg-indigo-700">
+   🎟 Acheter un billet
+</a>
 
 <?php if(isset($error)): ?>
     <div class="glass-card p-6 rounded-xl text-center text-red-400 font-bold">
@@ -84,6 +87,7 @@
                         <span class="text-sm text-gray-400"><?= $cat['nb_places'] ?> places</span>
                     </li>
                 <?php endforeach; ?>
+                
             </ul>
         <?php endif; ?>
     </div>
