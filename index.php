@@ -7,16 +7,15 @@ spl_autoload_register(function ($class) {
 });
 
 // Redirection selon le role
-
 if (isset($_SESSION['role'])) {
 
     if ($_SESSION['role'] === 'admin') {
-        header("Location: admin/dashboard.php");
+        header("Location: admin/dashbord.php");
         exit;
     }
 
     if ($_SESSION['role'] === 'organisateur') {
-        header("Location: organizer/create_match.php");
+        header("Location: organizer/dashbord.php");
         exit;
     }
 
@@ -27,6 +26,4 @@ if (isset($_SESSION['role'])) {
 
 }
 
-// Visiteur (non connecte)
-require_once "pages/home.php";
 ?>

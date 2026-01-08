@@ -6,16 +6,16 @@ class Acheteur extends User{
 
     protected $db;
 
-    public function __construct($id, $nom, $email){
-        parent::__construct($id, $nom, $email, 'acheteur');
+    public function __construct($id, $nom, $email,$password){
+        parent::__construct($id, $nom, $email,$password,'acheteur');
         $this->db = Database::connect();
     }
 
     /* ------------------   MATCHS  ------------------ */
 
-    public function listerMatchsDisponibles(){
+    public static function listerMatchsDisponibles(){
 
-        $stmt = $this->db->query("
+        $stmt =  Database::connect()->query("
             SELECT * 
             FROM matches
             WHERE statut = 'valide'
@@ -58,9 +58,9 @@ class Acheteur extends User{
 
     /*-------------- Recuperer categorie d'un match -----------*/
 
-    public function getCategoriesMatch(int $matchId): array{
+    public static function getCategoriesMatch(int $matchId): array{
 
-        $stmt = $this->db->prepare("
+        $stmt = Database::connect()->prepare("
             SELECT id, nom, prix,nb_places    
             FROM categories
             WHERE match_id = ?

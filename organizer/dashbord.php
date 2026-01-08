@@ -6,6 +6,12 @@
     require_once "../classes/Organisateur.php";
 
     $db = Database::connect();
+    
+    // Vérification sécurité : accès organisateur uniquement
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
+        header("Location: ../auth/login.php");
+        exit;
+    }
 
     /* Infos organisateur */
 

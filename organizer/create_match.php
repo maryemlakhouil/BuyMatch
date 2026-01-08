@@ -5,10 +5,10 @@ require_once "../classes/Organisateur.php";
 require_once "../config/database.php";
 
 // Vérification sécurité : accès organisateur uniquement
-// if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
-//     header("Location: ../auth/login.php");
-//     exit;
-// }
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
+    header("Location: ../auth/login.php");
+    exit;
+}
 
 // Connexion DB
 $db = Database::connect();
@@ -27,7 +27,7 @@ $message = "";
 function uploadLogo($file, $prefix) {
     $uploadsDir = "../uploads/";
     if ($file['error'] === 0) {
-        $allowed = ['image/png', 'image/jpeg', 'image/jpg'];
+        $allowed = ['image/png', 'image/jpeg','image/svg', 'image/jpg'];
         if (in_array($file['type'], $allowed)) {
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = uniqid($prefix . "_") . "." . $ext;

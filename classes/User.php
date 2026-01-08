@@ -10,11 +10,12 @@
 
         // constructure
 
-        public function __construct(int $id,string $nom,string $email,string $role,bool $estActif=true){
+        public function __construct(int $id,string $nom,string $email,string $password,string $role,bool $estActif=true){
 
             $this->id = $id;
             $this->nom = $nom;
             $this->email = $email;
+            $this->password = $password;
             $this->role = $role;
             $this->estActif = $estActif;
         }
@@ -52,7 +53,7 @@
         }
 
         public function setEmail(string $Email) : void {
-            if(filter_var($email,FILTER_VALIDATE_EMAIL)){
+            if(filter_var($Email,FILTER_VALIDATE_EMAIL)){
                 $this->email=$Email;
             }
         }

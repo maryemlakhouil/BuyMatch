@@ -4,10 +4,10 @@
     require_once "../config/database.php";
     require_once "../classes/Organisateur.php";
 
-    // if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
-    //     header('Location: ../auth/login.php');
-    //     exit;
-    // }
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
+        header('Location: ../auth/login.php');
+        exit;
+    }
 
     /* Connexion DB */
     $db = Database::connect();
