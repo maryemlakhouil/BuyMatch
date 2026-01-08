@@ -1,35 +1,43 @@
 <?php
-    session_start();
+session_start();
 
-    require_once "../config/database.php";
-    require_once "../classes/Admin.php";
+require_once "../config/database.php";
+require_once "../classes/Admin.php";
 
-    $db = Database::connect();
+$db = Database::connect();
 
-    /* Infos admin */
+/* Infos admin */
+$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch();
 
-    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    $user = $stmt->fetch();
+if (!$user) {
+    die("Admin introuvable");
+}
 
-    if (!$user) {
-        die("Admin introuvable");
-    }
+/* Objet Admin */
+$admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
 
-    /* Objet Admin */
-    $admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
+/* Traitement action */
+if (isset($_POST['match_id'], $_POST['action'])) {
+    $matchId = (int) $_POST['match_id'];
+    $action  = $_POST['action'];
 
-    /* Traitement action */
-    if (isset($_POST['match_id'], $_POST['action'])) {
-        $matchId = (int) $_POST['match_id'];
-        $action  = $_POST['action'];
+    // Statuts autorisés
+    $statuts_autorises = ['valide', 'annule'];
 
+    if (in_array($action, $statuts_autorises)) {
         $admin->changerStatutMatch($matchId, $action);
+    } else {
+        // Si action non valide
+        die("Statut invalide pour ce match");
     }
+}
 
-    /* Matchs en attente */
-    $matchs = $admin->listerMatchsEnAttente();
+/* Matchs en attente */
+$matchs = $admin->listerMatchsEnAttente();
 ?>
+
 
 
 <!DOCTYPE html>
@@ -150,15 +158,20 @@
                             <td class="p-5">
                                 <form method="POST" class="flex justify-center gap-3">
                                     <input type="hidden" name="match_id" value="<?= $m['id'] ?>">
+                                    
+                                    <!-- Valider le match -->
                                     <button name="action" value="valide"
                                             class="btn-gradient-green text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 uppercase tracking-wider">
                                         Valider
                                     </button>
-                                    <button name="action" value="refuse"
+
+                                    <!-- Annuler le match (au lieu de 'refuse') -->
+                                    <button name="action" value="annule"
                                             class="btn-gradient-red text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95 uppercase tracking-wider">
-                                        Refuser
+                                        Annuler
                                     </button>
                                 </form>
+
                             </td>
                         </tr>
                     <?php endforeach; ?>

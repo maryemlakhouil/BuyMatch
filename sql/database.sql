@@ -80,29 +80,20 @@ CREATE TABLE commentaires (
     FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
-/* 6 - vue sql : Statistiques par match */
+/* 6 - avis */
 
-CREATE VIEW vue_stats_match AS
-SELECT
-    m.id AS match_id,m.equipe1,m.equipe2,COUNT(b.id) AS billets_vendus,
-    IFNULL(SUM(b.prix), 0) AS chiffre_affaires
-FROM matches m
-LEFT JOIN billets b ON m.id = b.match_id
-GROUP BY m.id;
+CREATE TABLE avis_matchs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    match_id INT NOT NULL,
+    note TINYINT NOT NULL CHECK (note BETWEEN 1 AND 5),
+    commentaire TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, match_id),
 
-/* 7 - Calcul chiffre d’affaires d’un match */
-
-DELIMITER //
-
-CREATE PROCEDURE calculer_chiffre_affaires(IN p_match_id INT)
-BEGIN
-    SELECT 
-        IFNULL(SUM(prix), 0) AS total
-    FROM billets
-    WHERE match_id = p_match_id;
-END //
-
-DELIMITER ;
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (match_id) REFERENCES matches(id) ON DELETE CASCADE
+);
 
 /*******************************
 Insertion De Donnée 
@@ -144,3 +135,56 @@ WHERE email = 'amin@gmail.com';
 
 ALTER TABLE matches ADD raison_refus TEXT NULL;
 
+/****************************
+    triggers 
+*****************************/
+DELIMITER $$
+
+CREATE TRIGGER statut_match
+BEFORE UPDATE ON matches
+FOR EACH ROW
+BEGIN
+    IF NEW.date_heure < NOW() THEN
+        SET NEW.statut = 'termine';
+    END IF;
+END$$
+
+DELIMITER ;
+
+CREATE EVENT IF NOT EXISTS update_matches_terminee
+ON SCHEDULE EVERY 1 MINUTE
+DO
+  UPDATE matches
+  SET status = 'termine'
+  WHERE status = 'en_attente'
+    AND date_heure < NOW();
+
+
+/****************************
+    Les views 
+****************************/
+
+/* 1 - vue sql : Statistiques par match */
+
+CREATE VIEW vue_stats_match AS
+SELECT
+    m.id AS match_id,m.equipe1,m.equipe2,COUNT(b.id) AS billets_vendus,
+    IFNULL(SUM(b.prix), 0) AS chiffre_affaires
+FROM matches m
+LEFT JOIN billets b ON m.id = b.match_id
+GROUP BY m.id;
+
+/*****************************
+    Procedure
+*****************************/
+DELIMITER //
+
+CREATE PROCEDURE calculer_chiffre_affaires(IN p_match_id INT)
+BEGIN
+    SELECT 
+        IFNULL(SUM(prix), 0) AS total
+    FROM billets
+    WHERE match_id = p_match_id;
+END //
+
+DELIMITER ;

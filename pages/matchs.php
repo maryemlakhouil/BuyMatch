@@ -1,89 +1,140 @@
 <?php
 session_start();
-
 require_once "../config/database.php";
+require_once "../classes/User.php";
 require_once "../classes/Acheteur.php";
 
-/* Sécurité */
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'acheteur') {
+/*  Auth */
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../auth/login.php");
     exit;
 }
 
 $db = Database::connect();
 
-/* Infos acheteur */
+/*  User */
 $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 
 if (!$user) {
-    die("Acheteur introuvable");
+    die("Utilisateur introuvable");
 }
 
-/* Objet Acheteur */
 $acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email']);
 
-/* Matchs disponibles */
-$matchs = $acheteur->listerMatchsDisponibles();
+/* Match */
+$matchId = $_GET['match_id'] ?? null;
+if (!$matchId || !is_numeric($matchId)) {
+    die("Match invalide");
+}
+
+$match = $acheteur->getMatchById((int)$matchId);
+if (!$match) {
+    die("Match introuvable");
+}
+
+/*  Match pas terminé */
+if ($match['statut'] !== 'termine') {
+    die("Vous ne pouvez commenter qu'après la fin du match");
+}
+
+/*  Vérifier billet */
+if (!$acheteur->aAcheteBilletPourMatch($matchId)) {
+    die("Vous devez avoir assisté au match pour commenter");
+}
+
+/*  Déjà commenté */
+if ($acheteur->aDejaCommenter($matchId)) {
+    die("Vous avez déjà laissé un avis pour ce match");
+}
+
+/* Traitement formulaire */
+$error = "";
+$success = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $note = (int) ($_POST['note'] ?? 0);
+    $contenu = trim($_POST['contenu'] ?? "");
+
+    if ($note < 1 || $note > 5) {
+        $error = "La note doit être entre 1 et 5";
+    } elseif (strlen($contenu) < 5) {
+        $error = "Le commentaire est trop court";
+    } else {
+        try {
+            $acheteur->ajouterAvis($matchId, $note, $contenu);
+            $success = "Merci pour votre avis 🙏";
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+        }
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Matchs disponibles | BuyMatch</title>
+    <title>Laisser un avis | BuyMatch</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-950 text-gray-100 min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center">
 
-<!-- HEADER -->
-<header class="bg-gray-900 border-b border-gray-800">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-indigo-500">BuyMatch</h1>
-        <span class="text-gray-400"> <?= htmlspecialchars($user['nom']) ?></span>
-    </div>
-</header>
+<div class="w-full max-w-lg bg-gray-800 p-8 rounded-xl shadow-lg">
 
-<!-- CONTENU -->
-<main class="max-w-6xl mx-auto px-6 py-10">
+    <h1 class="text-2xl font-bold mb-2 text-center">
+        <?= htmlspecialchars($match['equipe1']) ?> vs <?= htmlspecialchars($match['equipe2']) ?>
+    </h1>
 
-    <h2 class="text-3xl font-bold mb-8">⚽ Matchs disponibles</h2>
+    <p class="text-gray-400 text-center mb-6">
+        Donnez votre avis sur ce match
+    </p>
 
-    <?php if (empty($matchs)): ?>
-        <div class="bg-gray-800 p-6 rounded-xl text-center text-gray-400">
-            Aucun match disponible pour le moment.
+    <?php if ($error): ?>
+        <div class="bg-red-500/20 text-red-400 p-3 rounded mb-4">
+            <?= htmlspecialchars($error) ?>
         </div>
-    <?php else: ?>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            <?php foreach ($matchs as $match): ?>
-                <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-indigo-500 transition">
-
-                    <h3 class="text-xl font-bold mb-2">
-                        <?= htmlspecialchars($match['equipe1']) ?>
-                        <span class="text-gray-400">vs</span>
-                        <?= htmlspecialchars($match['equipe2']) ?>
-                    </h3>
-
-                    <p class="text-gray-400 text-sm mb-4">
-                        📍 <?= htmlspecialchars($match['lieu']) ?><br>
-                        🕒 <?= date('d/m/Y H:i', strtotime($match['date_heure'])) ?>
-                    </p>
-
-                    <a href="match_details.php?id=<?= $match['id'] ?>"
-                       class="block text-center bg-indigo-600 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
-                        Voir détails
-                    </a>
-                </div>
-            <?php endforeach; ?>
-
-        </div>
-
     <?php endif; ?>
 
-</main>
+    <?php if ($success): ?>
+        <div class="bg-green-500/20 text-green-400 p-3 rounded mb-4">
+            <?= htmlspecialchars($success) ?>
+        </div>
+    <?php else: ?>
+    <form method="POST" class="space-y-4">
+
+        <div>
+            <label class="block mb-1 font-bold">Note</label>
+            <select name="note" required class="w-full p-3 rounded bg-gray-700">
+                <option value="">Choisir une note</option>
+                <?php for ($i = 5; $i >= 1; $i--): ?>
+                    <option value="<?= $i ?>"><?= $i ?> ⭐</option>
+                <?php endfor; ?>
+            </select>
+        </div>
+
+        <div>
+            <label class="block mb-1 font-bold">Commentaire</label>
+            <textarea name="contenu" rows="4" required
+                      class="w-full p-3 rounded bg-gray-700"
+                      placeholder="Votre expérience..."></textarea>
+        </div>
+
+        <button class="w-full bg-indigo-600 py-3 rounded font-bold hover:bg-indigo-700">
+            Publier l’avis
+        </button>
+
+    </form>
+    <?php endif; ?>
+
+    <a href="match_details.php?id=<?= $matchId ?>"
+       class="block text-center text-indigo-400 mt-4 hover:underline">
+        ← Retour au match
+    </a>
+
+</div>
 
 </body>
 </html>

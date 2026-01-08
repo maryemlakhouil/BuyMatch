@@ -67,20 +67,20 @@ class Admin extends User {
         return $stmt->execute([$matchId]);
     }
 
-    public function changerStatutMatch(int $matchId, string $statut): bool {
+    public function changerStatutMatch(int $matchId, string $statut): void{
 
-        if (!in_array($statut, ['valide', 'refuse'])) {
-            return false;
+        $statutsAutorises = ['en_attente', 'valide', 'termine', 'annule'];
+
+        if (!in_array($statut, $statutsAutorises)) {
+            throw new Exception("Statut invalide");
         }
 
         $stmt = $this->db->prepare("
-            UPDATE matches
-            SET statut = ?
-            WHERE id = ?
+            UPDATE matches SET statut = ? WHERE id = ?
         ");
-
-        return $stmt->execute([$statut, $matchId]);
+        $stmt->execute([$statut, $matchId]);
     }
+
 
     // 4- Lister tous les utilisateurs
 

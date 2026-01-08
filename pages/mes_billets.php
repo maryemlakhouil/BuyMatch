@@ -43,7 +43,7 @@ $billets = $acheteur->billetsAchetes();
 <body class="bg-gray-900 text-gray-100 p-8">
 
 <h1 class="text-3xl font-bold text-indigo-500 mb-8">
-    🎟️ Mes billets
+     Mes billets
 </h1>
 
 <?php if (empty($billets)): ?>

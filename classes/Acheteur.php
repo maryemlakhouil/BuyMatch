@@ -16,13 +16,14 @@ class Acheteur extends User{
     public function listerMatchsDisponibles(){
 
         $stmt = $this->db->query("
-            SELECT *
+            SELECT * 
             FROM matches
             WHERE statut = 'valide'
               AND date_heure > NOW()
             ORDER BY date_heure ASC
         ");
         return $stmt->fetchAll();
+        return ;
     }
 
     /* ------------------ BILLETS ------------------ */
@@ -41,23 +42,13 @@ class Acheteur extends User{
         return $stmt->fetchAll();
     }
     
-    /* ------------------ AVIS ------------------ */
-
-    public function ajouterAvis($matchId, $note, $contenu){
-
-        $stmt = $this->db->prepare("
-            INSERT INTO commentaires (user_id, match_id, note, contenu)
-            VALUES (?, ?, ?, ?)
-        ");
-        return $stmt->execute([$this->id,$matchId,$note,$contenu]);
-    }
     
     /*------------ Recuperer Match Par ID ---------------- */
 
     public function getMatchById(int $matchId){
 
         $stmt = $this->db->prepare("
-            SELECT id, equipe1, equipe2, lieu, date_heure
+            SELECT id, equipe1, equipe2, lieu, date_heure,statut
             FROM matches
             WHERE id = ? AND statut = 'valide'
         ");
@@ -168,6 +159,89 @@ class Acheteur extends User{
             throw $e;
         }
     }
+
+    /*----------- Match Est Terminee --------- */
+
+    public function matchEstTermine(int $matchId): bool {
+
+        $stmt = $this->db->prepare("
+            SELECT statut FROM matches WHERE id = ?
+        ");
+        $stmt->execute([$matchId]);
+        $match = $stmt->fetch();
+
+        return $match && $match['status'] === 'termine';
+    }
+
+    public function aDejaCommenter(int $matchId): bool {
+    $stmt = $this->db->prepare("
+        SELECT id FROM avis_matchs
+        WHERE user_id = ? AND match_id = ?
+    ");
+    $stmt->execute([$this->id, $matchId]);
+    return (bool) $stmt->fetch();
+}
+
+
+public function ajouterAvis(int $matchId, int $note, string $commentaire): void {
+
+    if (!$this->matchEstTermine($matchId)) {
+        throw new Exception("Le match n'est pas encore terminé.");
+    }
+
+    if ($this->aDejaCommenter($matchId)) {
+        throw new Exception("Vous avez déjà laissé un avis pour ce match.");
+    }
+
+    $stmt = $this->db->prepare("
+        INSERT INTO avis_matchs (user_id, match_id, note, commentaire)
+        VALUES (?, ?, ?, ?)
+    ");
+    $stmt->execute([$this->id, $matchId, $note, $commentaire]);
+}
+/* -------- Avis & Commentaires -------- */
+
+public function getAvisMatch(int $matchId): array
+{
+    $stmt = $this->db->prepare("
+        SELECT c.note, c.contenu, c.date_commentaire , u.nom
+        FROM commentaires c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.match_id = ?
+        ORDER BY c.date_commentaire  DESC
+    ");
+    $stmt->execute([$matchId]);
+    return $stmt->fetchAll();
+}
+
+public function getStatsAvis(int $matchId): array
+{
+    $db = Database::connect();
+
+    $stmt = $db->prepare("
+        SELECT 
+            COUNT(*) AS total,
+            ROUND(AVG(note), 1) AS moyenne
+        FROM avis
+        WHERE match_id = ?
+    ");
+    $stmt->execute([$matchId]);
+
+    $stats = $stmt->fetch();
+
+    return [
+        'total'   => (int) $stats['total'],
+        'moyenne' => $stats['moyenne'] ?? 0
+    ];
+}
+
+
+
+
+
+
+
+
 
 
 
