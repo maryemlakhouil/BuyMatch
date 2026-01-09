@@ -2,8 +2,8 @@
 
     session_start();
 
-    require_once "../config/database.php";
-    require_once "../classes/Organisateur.php";
+    require_once BASE_PATH ."/config/database.php";
+    require_once BASE_PATH ."/classes/Organisateur.php";
 
     $db = Database::connect();
     

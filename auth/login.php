@@ -1,10 +1,12 @@
 <?php
 session_start();
-require_once "../config/database.php";
-require_once "../classes/User.php";
-require_once "../classes/Acheteur.php";
-require_once "../classes/Organisateur.php";
-require_once "../classes/Admin.php";
+require_once BASE_PATH ."/config/database.php";
+require_once BASE_PATH ."/classes/User.php";
+require_once BASE_PATH ."/classes/Acheteur.php";
+require_once BASE_PATH ."/classes/Organisateur.php";
+require_once BASE_PATH . "/classes/Admin.php";
+
+
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 

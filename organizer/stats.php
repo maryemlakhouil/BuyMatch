@@ -1,8 +1,8 @@
 <?php
     session_start();
 
-    require_once "../config/database.php";
-    require_once "../classes/Organisateur.php";
+    require_once BASE_PATH ."/config/database.php";
+    require_once BASE_PATH ."/classes/Organisateur.php";
 
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
         header('Location: ../auth/login.php');
