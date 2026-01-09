@@ -6,7 +6,7 @@ class Acheteur extends User{
 
     protected $db;
 
-    public function __construct($id, $nom, $email,$password){
+    public function __construct($id, $nom, $email,$password,$role,$estActif){
         parent::__construct($id, $nom, $email,$password,'acheteur');
         $this->db = Database::connect();
     }
@@ -145,13 +145,14 @@ class Acheteur extends User{
             $this->db->commit();
 
             return [
-                'id' => (int)$ticketId,
-                'match_id' => $matchId,
-                'categorie_id' => $categorieId,
-                'numero_place' => $numeroPlace,
-                'prix' => $categorie['prix'],
-                'qr_token' => $qrToken
-            ];
+                    'id' => (int)$ticketId,
+                    'match_id' => $matchId,
+                    'categorie_id' => $categorieId,
+                    
+                    'numero_place' => $numeroPlace,
+                    'prix' => $categorie['prix'],
+                    'qr_token' => $qrToken
+                ];
 
 
         } catch (Exception $e) {
@@ -235,7 +236,35 @@ public function getStatsAvis(int $matchId): array
     ];
 }
 
+public function aAcheteBillet(int $matchId): bool
+{
+    $stmt = $this->db->prepare("
+        SELECT COUNT(*) 
+        FROM billets 
+        WHERE user_id = ? AND match_id = ?
+    ");
+    $stmt->execute([$this->id, $matchId]);
 
+    return $stmt->fetchColumn() > 0;
+}
+
+
+public function envoyerBilletParEmail(array $ticket, array $match): void
+{
+    require_once __DIR__ . '/../services/Mailer.php';
+
+    $mailer = new Mailer();
+
+    ob_start();
+   require_once __DIR__ . '/../templates/emails/ticket.php';
+    $html = ob_get_clean();
+
+    $mailer->send(
+        $this->email,
+        "🎟 Votre billet - {$match['equipe1']} vs {$match['equipe2']}",
+        $html
+    );
+}
 
 
 

@@ -49,7 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $userData['nom'],
                     $userData['email'],
                     $userData['password'],
-                    $userData['role']
+                    $userData['role'],
+                    $userData['estActif']
                 );
         }
 
