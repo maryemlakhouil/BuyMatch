@@ -26,4 +26,13 @@ if (isset($_SESSION['role'])) {
 
 }
 
+$page = $_GET['page'] ?? 'home';
+
+$file = __DIR__ . "/pages/$page.php";
+
+if (file_exists($file)) {
+    require $file;
+} else {
+    require __DIR__ . '/pages/404.php';
+}        
 ?>
