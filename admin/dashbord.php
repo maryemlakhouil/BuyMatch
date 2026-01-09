@@ -4,10 +4,10 @@
     require_once "../classes/Admin.php";
 
     // Sécurité
-    // if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    //     header("Location: ../auth/login.php");
-    //     exit;
-    // }
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+        header("Location: ../auth/login.php");
+        exit;
+    }
 
     $db = Database::connect();
 
