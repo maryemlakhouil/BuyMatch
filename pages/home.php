@@ -91,7 +91,7 @@ foreach ($matchs as $m) {
                     <?php endif; ?>
                 </div>
 
-                <a href="match_details.php?id=<?= $match['id'] ?>"
+                <a href="index.php?page=match_details&id=<?= $match['id'] ?>"
                    class="mt-4 inline-block text-center bg-indigo-600 py-2 rounded font-bold hover:bg-indigo-700">
                     Voir les détails
                 </a>

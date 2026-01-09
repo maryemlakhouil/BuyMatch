@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require_once BASE_PATH ."/config/database.php";
 require_once BASE_PATH ."/classes/User.php";
 require_once BASE_PATH ."/classes/Acheteur.php";

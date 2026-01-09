@@ -1,13 +1,12 @@
 <?php
-session_start();
 
-require_once  BASE_PATH . "/../config/database.php";
-require_once BASE_PATH .  "/../classes/User.php";
-require_once BASE_PATH. "/../classes/Acheteur.php";
+require_once  BASE_PATH . "/config/database.php";
+require_once BASE_PATH .  "/classes/User.php";
+require_once BASE_PATH. "/classes/Acheteur.php";
 
 /* Sécurité */
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
+    header("Location: index.php?page=login");
     exit;
 }
 
@@ -76,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-900 text-gray-100 p-8">
 
-<a href="match_details.php?id=<?= $matchId ?>" class="text-indigo-400">← Retour</a>
+<a href="index.php?page=match_details&id=<?= $matchId ?>" class="text-indigo-400">← Retour</a>
 
 <div class="max-w-xl mx-auto bg-gray-800 p-8 rounded-xl mt-6">
 
@@ -131,10 +130,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
     <?php endif; ?>
     <?php if ($success): ?>
-    <a href="ticket_print.php?ticket_id=<?= $ticket['id'] ?>"target="_blank"
+    <a href="index.php?page=ticket_print&ticket_id=<?= $ticket['id'] ?>"target="_blank"
        class="block mt-4 bg-green-600 text-center py-3 rounded font-bold hover:bg-green-700">
         Télécharger / Imprimer le billet
     </a>
+   
+
 <?php endif; ?>
 
 

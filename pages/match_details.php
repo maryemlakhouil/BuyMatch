@@ -1,13 +1,12 @@
 <?php
-session_start();
 
-require_once "../config/database.php";
-require_once "../classes/User.php";
-require_once "../classes/Acheteur.php";
+require_once BASE_PATH . "/config/database.php";
+require_once BASE_PATH . "/classes/User.php";
+require_once BASE_PATH . "/classes/Acheteur.php";
 
 /* Sécurité */
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
+    header("Location: index.php?page=login");
     exit;
 }
 
@@ -73,7 +72,7 @@ if ($match && $match['statut'] === 'termine') {
 
 <body class="min-h-screen p-8">
 
-<a href="matchs.php" class="text-indigo-400 hover:text-indigo-300 mb-8 inline-block">
+<a href="index.php?matchs.php" class="text-indigo-400 hover:text-indigo-300 mb-8 inline-block">
     ← Retour aux matchs
 </a>
 
@@ -106,10 +105,11 @@ if ($match && $match['statut'] === 'termine') {
 
 <!-- ACHAT -->
 <?php if ($match&& $match['statut'] !== 'termine'): ?>
-    <a href="buy_ticket.php?match_id=<?= $match['id'] ?>"
-       class="inline-block mb-8 bg-indigo-600 px-6 py-3 rounded font-bold hover:bg-indigo-700">
-       🎟 Acheter un billet
-    </a>
+   <a href="index.php?page=buy_ticket&match_id=<?= $match['id'] ?>"
+   class="inline-block mb-8 bg-indigo-600 px-6 py-3 rounded font-bold hover:bg-indigo-700">
+   🎟 Acheter un billet
+</a>
+
 <?php endif; ?>
 <?php if ($match && $match['statut'] === 'termine'): ?>
     <div class="glass-card p-6 rounded-2xl mb-8">

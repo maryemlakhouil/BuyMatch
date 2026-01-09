@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../config/database.php";
+require_once BASE_PATH . "/config/database.php";
 
 if (!isset($_SESSION['user_id'])) {
     die("Accès refusé");
@@ -65,7 +65,7 @@ h1 {
 <body onload="window.print()">
 
 <div class="ticket">
-    <h1>🎟 BuyMatch</h1>
+    <h1> BuyMatch</h1>
 
     <div class="info"><strong>Match :</strong>
         <?= htmlspecialchars($ticket['equipe1']) ?> vs <?= htmlspecialchars($ticket['equipe2']) ?>

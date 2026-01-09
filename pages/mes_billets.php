@@ -1,9 +1,9 @@
 <?php
 session_start();
 
-require_once "../config/database.php";
-require_once "../classes/User.php";
-require_once "../classes/Acheteur.php";
+require_once BASE_PATH . "/config/database.php";
+require_once BASE_PATH . "/classes/User.php";
+require_once BASE_PATH . "/classes/Acheteur.php";
 
 /* Sécurité */
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'acheteur') {
