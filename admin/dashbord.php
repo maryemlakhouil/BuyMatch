@@ -1,7 +1,8 @@
 <?php
     session_start();
-    require_once "../config/database.php";
-    require_once "../classes/Admin.php";
+    
+    require_once  BASE_PATH . "/config/database.php";
+    require_once  BASE_PATH . "/classes/Admin.php";
 
     // Sécurité
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
