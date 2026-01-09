@@ -1,12 +1,8 @@
 <?php
 session_start();
+define('BASE_PATH', __DIR__);
 
-// Autoload des classes
-spl_autoload_register(function ($class) {
-    require_once __DIR__ . "/classes/" . $class . ".php";
-});
 
-// Redirection selon le role
 if (isset($_SESSION['role'])) {
 
     if ($_SESSION['role'] === 'admin') {
@@ -18,21 +14,18 @@ if (isset($_SESSION['role'])) {
         header("Location: organizer/dashbord.php");
         exit;
     }
-
-    if ($_SESSION['role'] === 'acheteur') {
-        header("Location: pages/home.php");
-        exit;
-    }
-
 }
 
+/* ROUTING VISITEUR / ACHETEUR */
 $page = $_GET['page'] ?? 'home';
 
-$file = __DIR__ . "/pages/$page.php";
+$allowedPages = ['home','match_details','login','register','404'];
 
-if (file_exists($file)) {
-    require $file;
-} else {
-    require __DIR__ . '/pages/404.php';
-}        
+if (!in_array($page, $allowedPages)) {
+    http_response_code(404);
+    $page = '404';
+}
+
+/* AFFICHAGE */
+require BASE_PATH . "/pages/$page.php";
 ?>
