@@ -3,7 +3,6 @@ require_once "../config/database.php";
 require_once "../classes/Acheteur.php";
 
 $db = Database::connect();
-// $acheteur = new Acheteur(0, ,"Visiteur", "");
 
 // Filtre exemple
 $lieuFilter = $_GET['lieu'] ?? '';

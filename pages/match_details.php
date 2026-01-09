@@ -23,7 +23,7 @@ if (!$user) {
 }
 
 /* Objet Acheteur */
-$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email']);
+$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email'], '', 'acheteur', true);
 
 /* Vérifier match */
 $match = null;

@@ -21,7 +21,8 @@ if (!$user) {
     die("Utilisateur introuvable");
 }
 
-$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email']);
+$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email'], '', 'acheteur', true);
+
 
 /* Match */
 $matchId = $_GET['match_id'] ?? null;
@@ -40,9 +41,10 @@ if ($match['statut'] !== 'termine') {
 }
 
 /*  Vérifier billet */
-if (!$acheteur->aAcheteBilletPourMatch($matchId)) {
-    die("Vous devez avoir assisté au match pour commenter");
+if (!$acheteur->aAcheteBillet($matchId)) {
+    die("Vous devez avoir acheté un billet pour commenter");
 }
+
 
 /*  Déjà commenté */
 if ($acheteur->aDejaCommenter($matchId)) {

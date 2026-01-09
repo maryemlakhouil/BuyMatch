@@ -23,7 +23,8 @@ if (!$user) {
 }
 
 /* Objet Acheteur */
-$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email']);
+
+$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email'], '', 'acheteur', true);
 
 /* Vérifier match */
 $matchId = $_GET['match_id'] ?? null;
@@ -54,8 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $numeroPlace  = (int) $_POST['numero_place'];
 
         $ticket = $acheteur->acheterBillet($matchId, $categorieId, $numeroPlace);
+        // ENVOI EMAIL
+        $acheteur->envoyerBilletParEmail($ticket, $match);
 
-        $success = " Billet acheté avec succès ! Place n° {$ticket['numero_place']}";
+        $success = "Billet acheté avec succès ! Un email vous a été envoyé ";
 
     } catch (Exception $e) {
         $error = $e->getMessage();
