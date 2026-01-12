@@ -1,77 +1,78 @@
 <?php
-session_start();
-require_once BASE_PATH . "/config/database.php";
-require_once BASE_PATH . "/classes/User.php";
-require_once BASE_PATH . "/classes/Acheteur.php";
 
-/*  Auth */
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
-    exit;
-}
+    require_once BASE_PATH . "/config/database.php";
+    require_once BASE_PATH . "/classes/User.php";
+    require_once BASE_PATH . "/classes/Acheteur.php";
 
-$db = Database::connect();
+    /*  Auth */
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: index.php?page=login");
+        exit;
+    }
 
-/*  User */
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
+    $db = Database::connect();
 
-if (!$user) {
-    die("Utilisateur introuvable");
-}
+    /*  User */
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
 
-$acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email'], '', 'acheteur', true);
+    if (!$user) {
+        header("Location: index.php?page=logout");
+        exit;
+    }
 
-
-/* Match */
-$matchId = $_GET['match_id'] ?? null;
-if (!$matchId || !is_numeric($matchId)) {
-    die("Match invalide");
-}
-
-$match = $acheteur->getMatchById((int)$matchId);
-if (!$match) {
-    die("Match introuvable");
-}
-
-/*  Match pas terminé */
-if ($match['statut'] !== 'termine') {
-    die("Vous ne pouvez commenter qu'après la fin du match");
-}
-
-/*  Vérifier billet */
-if (!$acheteur->aAcheteBillet($matchId)) {
-    die("Vous devez avoir acheté un billet pour commenter");
-}
+    $acheteur = new Acheteur($_SESSION['user_id'], $user['nom'], $user['email'], '', 'acheteur', true);
 
 
-/*  Déjà commenté */
-if ($acheteur->aDejaCommenter($matchId)) {
-    die("Vous avez déjà laissé un avis pour ce match");
-}
+    /* Match */
+    $matchId = $_GET['match_id'] ?? null;
+    if (!$matchId || !is_numeric($matchId)) {
+        die("Match invalide");
+    }
 
-/* Traitement formulaire */
-$error = "";
-$success = "";
+    $match = $acheteur->getMatchById((int)$matchId);
+    if (!$match) {
+        die("Match introuvable");
+    }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $note = (int) ($_POST['note'] ?? 0);
-    $contenu = trim($_POST['contenu'] ?? "");
+    /*  Match pas terminé */
+    if ($match['statut'] !== 'termine') {
+        die("Vous ne pouvez commenter qu'après la fin du match");
+    }
 
-    if ($note < 1 || $note > 5) {
-        $error = "La note doit être entre 1 et 5";
-    } elseif (strlen($contenu) < 5) {
-        $error = "Le commentaire est trop court";
-    } else {
-        try {
-            $acheteur->ajouterAvis($matchId, $note, $contenu);
-            $success = "Merci pour votre avis 🙏";
-        } catch (Exception $e) {
-            $error = $e->getMessage();
+    /*  Vérifier billet */
+    if (!$acheteur->aAcheteBillet($matchId)) {
+        die("Vous devez avoir acheté un billet pour commenter");
+    }
+
+
+    /*  Déjà commenté */
+    if ($acheteur->aDejaCommenter($matchId)) {
+        die("Vous avez déjà laissé un avis pour ce match");
+    }
+
+    /* Traitement formulaire */
+    $error = "";
+    $success = "";
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $note = (int) ($_POST['note'] ?? 0);
+        $contenu = trim($_POST['contenu'] ?? "");
+
+        if ($note < 1 || $note > 5) {
+            $error = "La note doit être entre 1 et 5";
+        } elseif (strlen($contenu) < 5) {
+            $error = "Le commentaire est trop court";
+        } else {
+            try {
+                $acheteur->ajouterAvis($matchId, $note, $contenu);
+                $success = "Merci pour votre avis 🙏";
+            } catch (Exception $e) {
+                $error = $e->getMessage();
+            }
         }
     }
-}
 ?>
 
 <!DOCTYPE html>
@@ -125,13 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <button class="w-full bg-indigo-600 py-3 rounded font-bold hover:bg-indigo-700">
-            Publier l’avis
+            Publier l'avis
         </button>
 
     </form>
     <?php endif; ?>
 
-    <a href="match_details.php?id=<?= $matchId ?>"
+    <a href="index.php?page=match_details&id=<?= $matchId ?>"
        class="block text-center text-indigo-400 mt-4 hover:underline">
         ← Retour au match
     </a>

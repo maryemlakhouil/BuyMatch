@@ -1,12 +1,11 @@
 <?php
-    session_start();
 
     require_once  BASE_PATH . "/config/database.php";
     require_once  BASE_PATH . "/classes/Admin.php";
 
     /* Sécurité */
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-        header("Location: ../auth/login.php");
+        header("Location: index.php?page=login");
         exit;
     }
 
@@ -49,7 +48,7 @@
     <!-- Header avec retour -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
         <div>
-            <a href="dashbord.php" class="inline-flex items-center text-sm text-blue-400 hover:text-blue-300 transition-colors mb-2 group">
+            <a href="index.php?page=admin_dashbord" class="inline-flex items-center text-sm text-blue-400 hover:text-blue-300 transition-colors mb-2 group">
                 <svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 Retour au Dashboard
             </a>
@@ -111,7 +110,7 @@
                             <span class="block opacity-50"><?= date('H:i', strtotime($c['date_commentaire'])) ?></span>
                         </td>
                         <td class="p-4 text-right">
-                            <a href="?delete=<?= $c['id'] ?>"
+                            <a href="index.php?page=admin_comments&delete=<?= $c['id'] ?>"
                                onclick="return confirm('Confirmer la suppression définitive de ce commentaire ?')"
                                class="inline-flex items-center px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-xs font-bold hover:bg-red-500 hover:text-white transition-all ring-1 ring-red-500/20">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>

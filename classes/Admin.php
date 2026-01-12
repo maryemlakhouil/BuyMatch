@@ -1,7 +1,6 @@
 <?php
 
-require_once __DIR__ . '/User.php';
-
+require_once BASE_PATH . "/classes/User.php";
 require_once BASE_PATH . "/config/database.php";
 
 class Admin extends User {

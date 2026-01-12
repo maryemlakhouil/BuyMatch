@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 require_once BASE_PATH . "/config/database.php";
 
 if (!isset($_SESSION['user_id'])) {

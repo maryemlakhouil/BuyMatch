@@ -1,10 +1,9 @@
 <?php
-    session_start();
 
     require_once BASE_PATH . "/config/database.php";
 
     if (!isset($_SESSION['user_id'])) {
-        header("Location: ../auth/login.php");
+        header("Location: index.php?page=login");
         exit;
     }
 
@@ -16,7 +15,8 @@
     $user = $stmt->fetch();
 
     if (!$user) {
-        die("Utilisateur introuvable");
+        header("Location: index.php?page=logout");
+        exit;
     }
 
     $message = "";
@@ -74,9 +74,9 @@
 <div class="max-w-4xl mx-auto px-4 pt-8">
         <?php
             $backLink = match ($_SESSION['role']) {
-                'organisateur' => '../organizer/dashbord.php',
-                'admin'        => '../admin/dashboard.php',
-                default        => '../pages/home.php', 
+                'organisateur' => 'index.php?page=organisateur_dashbord',
+                'admin'        => 'index.php?page=admin_dashbord',
+                default        => 'index.php?page=home', 
             };
         ?>
     <a href="<?= $backLink ?>" class="inline-flex items-center text-indigo-400 hover:text-indigo-300 transition-colors mb-8 group">

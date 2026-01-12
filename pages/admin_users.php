@@ -1,14 +1,13 @@
 <?php
-    session_start();
-
   
     require_once  BASE_PATH . "/config/database.php";
     require_once  BASE_PATH . "/classes/Admin.php";
 
     /* Sécurité */
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-        header("Location: ../auth/login.php");
+        header("Location: index.php?page=login");
         exit;
+
     }
 
     $db = Database::connect();
@@ -74,7 +73,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
             <div>
-                <a href="dashbord.php" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 mb-2 transition-colors">
+                <a  href="index.php?page=admin_dashbord" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 mb-2 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     Retour au Dashboard
                 </a>
@@ -131,13 +130,15 @@
                             <td class="p-5 text-right space-x-2">
                                 <?php if ($u['id'] !== $_SESSION['user_id']): ?>
                                     <!-- Toggle Status -->
-                                    <a href="?toggle=<?= $u['id'] ?>&statut=<?= $u['is_active'] ? 0 : 1 ?>"
+                                    <a href="index.php?page=admin_users&toggle=<?= $u['id'] ?>&statut=<?= $u['is_active'] ? 0 : 1 ?>"
+
                                        class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all <?= $u['is_active'] ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500 hover:text-black' : 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-black border border-emerald-500/20' ?>">
                                         <?= $u['is_active'] ? 'Désactiver' : 'Activer' ?>
                                     </a>
 
                                     <!-- Delete -->
-                                    <a href="?delete=<?= $u['id'] ?>"
+                                    <a href="index.php?page=admin_users&delete=<?= $u['id'] ?>"
+
                                        class="inline-flex items-center px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-600 hover:text-white text-xs font-semibold transition-all border border-rose-500/20"
                                        onclick="return confirm('Confirmer la suppression irréversible ?')">
                                         Supprimer
@@ -145,7 +146,7 @@
 
                                     <!-- Role Change -->
                                     <?php if ($u['role'] !== 'admin'): ?>
-                                        <a href="?role=<?= $u['role'] === 'acheteur' ? 'organisateur' : 'acheteur' ?>&id=<?= $u['id'] ?>"
+                                        <a href="index.php?page=admin_users&role=<?= $u['role'] === 'acheteur' ? 'organisateur' : 'acheteur' ?>&id=<?= $u['id'] ?>"
                                            class="inline-flex items-center px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 text-xs font-bold transition-all shadow-lg shadow-indigo-600/20 uppercase tracking-tighter">
                                             ➜ <?= $u['role'] === 'acheteur' ? 'Organisateur' : 'Acheteur' ?>
                                         </a>

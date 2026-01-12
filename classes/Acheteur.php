@@ -1,6 +1,7 @@
 <?php
 
-require_once __DIR__ . '/User.php';
+require_once BASE_PATH . "/classes/User.php";
+
 
 
 class Acheteur extends User{
@@ -17,14 +18,14 @@ class Acheteur extends User{
     public static function listerMatchsDisponibles(){
 
         $stmt =  Database::connect()->query("
-            SELECT * 
+
+            SELECT id, equipe1, equipe2, logo_equipe1,logo_equipe2, lieu, date_heure
             FROM matches
             WHERE statut = 'valide'
               AND date_heure > NOW()
             ORDER BY date_heure ASC
         ");
         return $stmt->fetchAll();
-        return ;
     }
 
     /* ------------------ BILLETS ------------------ */

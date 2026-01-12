@@ -1,44 +1,48 @@
 <?php
-session_start();
-
+    
     require_once  BASE_PATH . "/config/database.php";
     require_once  BASE_PATH . "/classes/Admin.php";
 
-$db = Database::connect();
-
-/* Infos admin */
-$stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch();
-
-if (!$user) {
-    die("Admin introuvable");
-}
-
-/* Objet Admin */
-$admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
-
-/* Traitement action */
-if (isset($_POST['match_id'], $_POST['action'])) {
-    $matchId = (int) $_POST['match_id'];
-    $action  = $_POST['action'];
-
-    // Statuts autorisés
-    $statuts_autorises = ['valide', 'annule'];
-
-    if (in_array($action, $statuts_autorises)) {
-        $admin->changerStatutMatch($matchId, $action);
-    } else {
-        // Si action non valide
-        die("Statut invalide pour ce match");
+    /* Sécurité ADMIN */
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+        header("Location: index.php?page=login");
+        exit;
     }
-}
 
-/* Matchs en attente */
-$matchs = $admin->listerMatchsEnAttente();
+    $db = Database::connect();
+
+    /* Infos admin */
+    $stmt = $db->prepare("SELECT nom, email FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        header("Location: index.php?page=logout");
+        exit;
+    }
+
+    /* Objet Admin */
+    $admin = new Admin($_SESSION['user_id'],$user['nom'],$user['email'],'');
+
+    /* Traitement action */
+    if (isset($_POST['match_id'], $_POST['action'])) {
+        $matchId = (int) $_POST['match_id'];
+        $action  = $_POST['action'];
+
+        // Statuts autorisés
+        $statuts_autorises = ['valide', 'annule'];
+
+        if (in_array($action, $statuts_autorises)) {
+            $admin->changerStatutMatch($matchId, $action);
+        }
+        
+        header("Location: index.php?page=admin_validate_match");
+        exit;
+    }
+
+    /* Matchs en attente */
+    $matchs = $admin->listerMatchsEnAttente();
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -83,7 +87,7 @@ $matchs = $admin->listerMatchsEnAttente();
 <div class="max-w-6xl mx-auto">
     <!-- Ajout du bouton retour au dashboard -->
     <div class="mb-8 flex items-center justify-between">
-        <a href="dashbord.php" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
+        <a href="index.php?page=admin_dashbord" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>

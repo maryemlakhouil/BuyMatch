@@ -1,11 +1,10 @@
 <?php
-    session_start();
 
     require_once BASE_PATH ."/config/database.php";
     require_once BASE_PATH ."/classes/Organisateur.php";
 
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'organisateur') {
-        header('Location: ../auth/login.php');
+        header('Location: index.php?page=login');
         exit;
     }
 
@@ -18,7 +17,8 @@
     $user = $stmt->fetch();
 
     if (!$user) {
-        die("Organisateur introuvable !!");
+          header("Location: index.php?page=logout");
+        exit;
     }
 
     /* Instanciation POO */
@@ -120,7 +120,7 @@
     <?php endif; ?>
 
     <div class="mt-12 text-center">
-        <a href="dashbord.php" class="inline-flex items-center text-sm font-sport text-gray-500 hover:text-white transition-colors">
+        <a href="index.php?page=organisateur_dashbord" class="inline-flex items-center text-sm font-sport text-gray-500 hover:text-white transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             Retour au Dashboard
         </a>

@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 
 require_once BASE_PATH ."/classes/Organisateur.php";
 require_once BASE_PATH ."/config/database.php";
@@ -25,9 +25,9 @@ $message = "";
 
 // Fonction upload logo
 function uploadLogo($file, $prefix) {
-    $uploadsDir = "../uploads/";
+    $uploadsDir = BASE_PATH . '/uploads/';
     if ($file['error'] === 0) {
-        $allowed = ['image/png', 'image/jpeg','image/svg', 'image/jpg'];
+        $allowed = ['image/png', 'image/jpeg','image/svg+xml', 'image/jpg'];
         if (in_array($file['type'], $allowed)) {
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = uniqid($prefix . "_") . "." . $ext;
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </button>
     </form>
      <div class="mt-12 text-center">
-        <a href="dashbord.php" class="inline-flex items-center text-sm font-sport text-gray-500 hover:text-white transition-colors">
+        <a href="index.php?page=organisateur_dashbord" class="inline-flex items-center text-sm font-sport text-gray-500 hover:text-white transition-colors">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
             Retour au Dashboard
         </a>
