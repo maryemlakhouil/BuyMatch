@@ -1,34 +1,46 @@
 <?php
 
-require_once BASE_PATH ."/config/database.php";
+require_once BASE_PATH . "/config/database.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $nom = htmlspecialchars($_POST['nom']);
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $password = $_POST['password'];
-    $role = 'acheteur'; 
+    $role = 'acheteur';
 
     if ($email && !empty($password)) {
 
         $db = Database::connect();
 
-        $sql = "INSERT INTO users (nom, email, password, role)
-                VALUES (:nom, :email, :password, :role)";
+        // 1 - Vérifier si l'email existe déjà
+        $check = $db->prepare("SELECT id FROM users WHERE email = :email");
+        $check->execute([':email' => $email]);
 
-        $stmt = $db->prepare($sql);
-        $stmt->execute([
-            ':nom' => $nom,
-            ':email' => $email,
-            ':password' => password_hash($password, PASSWORD_DEFAULT),
-            ':role' => $role
-        ]);
+        if ($check->fetch()) {
+            $error = "Cet email est déjà utilisé.";
+        } else {
 
-        header("index.php?page=login");
-        exit;
+           
+            $sql = "INSERT INTO users (nom, email, password, role)
+                    VALUES (:nom, :email, :password, :role)";
+
+            $stmt = $db->prepare($sql);
+            $stmt->execute([
+                ':nom' => $nom,
+                ':email' => $email,
+                ':password' => password_hash($password, PASSWORD_DEFAULT),
+                ':role' => $role
+            ]);
+
+            //  Redirection 
+            header("Location: index.php?page=login");
+            exit;
+        }
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>

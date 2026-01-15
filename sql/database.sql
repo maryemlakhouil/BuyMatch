@@ -1,17 +1,14 @@
 /**********************************
-    Creation de la base
+    Création de la base
 ***********************************/
-
-CREATE DATABASE BuyMatch;
+CREATE DATABASE IF NOT EXISTS BuyMatch CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE BuyMatch;
 
 /*********************************
-    Creation Du Tableau
+    Création des tables
 **********************************/
-
 /* 1 - users */
-
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
@@ -21,9 +18,8 @@ CREATE TABLE users (
     date_creation DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-/* 2 - Match */
-
-CREATE TABLE matches (
+/* 2 - matches */
+CREATE TABLE IF NOT EXISTS matches (
     id INT AUTO_INCREMENT PRIMARY KEY,
     organisateur_id INT NOT NULL,
     equipe1 VARCHAR(100) NOT NULL,
@@ -34,26 +30,25 @@ CREATE TABLE matches (
     lieu VARCHAR(150) NOT NULL,
     duree INT DEFAULT 90,
     nb_places_total INT CHECK (nb_places_total <= 2000),
-    statut ENUM('en_attente','valide','refuse') DEFAULT 'en_attente',
+    statut ENUM('en_attente','valide','refuse','termine') DEFAULT 'en_attente',
     note_moyenne DECIMAL(3,2) DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    constraint fk_user FOREIGN KEY (organisateur_id) REFERENCES users(id)
+    raison_refus TEXT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (organisateur_id) REFERENCES users(id)
 );
 
-/* 3 - Categorie */
-
-CREATE TABLE categories (
+/* 3 - categories */
+CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     match_id INT NOT NULL,
     nom VARCHAR(50) NOT NULL,
     prix DECIMAL(8,2) NOT NULL,
     nb_places INT NOT NULL,
-    constraint fk_Match FOREIGN KEY (match_id) REFERENCES matches(id)
+    CONSTRAINT fk_Match FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
-/* 4 - billets */  
-
-CREATE TABLE billets (
+/* 4 - billets */
+CREATE TABLE IF NOT EXISTS billets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     match_id INT NOT NULL,
@@ -62,14 +57,13 @@ CREATE TABLE billets (
     prix DECIMAL(8,2) NOT NULL,
     qr_code VARCHAR(255),
     date_achat DATETIME DEFAULT CURRENT_TIMESTAMP,
-    constraint fk_users FOREIGN KEY (user_id) REFERENCES users(id),
-    constraint fk_Match1 FOREIGN KEY (match_id) REFERENCES matches(id),
-    constraint fk_categorie FOREIGN KEY (categorie_id) REFERENCES categories(id)
+    CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_Match1 FOREIGN KEY (match_id) REFERENCES matches(id),
+    CONSTRAINT fk_categorie FOREIGN KEY (categorie_id) REFERENCES categories(id)
 );
 
-/* 5 - Commantaires */
-
-CREATE TABLE commentaires (
+/* 5 - commentaires */
+CREATE TABLE IF NOT EXISTS commentaires (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     match_id INT NOT NULL,
@@ -80,9 +74,8 @@ CREATE TABLE commentaires (
     FOREIGN KEY (match_id) REFERENCES matches(id)
 );
 
-/* 6 - avis */
-
-CREATE TABLE avis_matchs (
+/* 6 - avis_matchs */
+CREATE TABLE IF NOT EXISTS avis_matchs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     match_id INT NOT NULL,
@@ -90,57 +83,50 @@ CREATE TABLE avis_matchs (
     commentaire TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (user_id, match_id),
-
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (match_id) REFERENCES matches(id) ON DELETE CASCADE
 );
 
-/*******************************
-Insertion De Donnée 
-*******************************/
+/**********************************
+    Insertion des données
+**********************************/
+/* Users */
+INSERT INTO users (nom, email, password, role) VALUES 
+('Maryem', 'maryem@gmail.com', '0000', 'acheteur'),
+('Amine', 'amin@gmail.com', '0000', 'organisateur'),
+('Admin', 'admin@gmail.com', '0000', 'admin');
 
-/* 1 - */
+/* Matches */
+INSERT INTO matches (organisateur_id, equipe1, equipe2, date_heure, lieu, nb_places_total) VALUES 
+(2, 'Raja', 'Wydad', '2026-01-15 20:00:00', 'Stade Mohammed V', 1800);
 
-INSERT INTO users (nom, email, password, role) VALUES ('Maryem', 'maryem@gmail.com', '0000', 'acheteur'),
-                                                      ('Amine', 'amin@gmail.com', '0000', 'organisateur'),
-                                                      ('Admin', 'admin@gmail.com', '0000', 'admin');
+/* Categories */
+INSERT INTO categories (match_id, nom, prix, nb_places) VALUES 
+(1, 'VIP', 150.00, 200),
+(1, 'Standard', 80.00, 600),
+(1, 'Economy', 40.00, 1000);
 
-/* 2 - */
+/* Billets */
+INSERT INTO billets (user_id, match_id, categorie_id, numero_place, prix, qr_code) VALUES 
+(1, 1, 2, 45, 80.00, 'QR_ABC_123');
 
-INSERT INTO matches (organisateur_id, equipe1, equipe2, date_heure, lieu, nb_places_total) VALUES (2, 'Raja', 'Wydad', '2026-01-15 20:00:00', 'Stade Mohammed V', 1800);
+/* Commentaires */
+INSERT INTO commentaires (user_id, match_id, contenu, note) VALUES 
+(1, 1, 'Match incroyable', 5);
 
-/* 3 - */
-
-INSERT INTO categories (match_id, nom, prix, nb_places) VALUES (1, 'VIP', 150.00, 200),
-                                                                (1, 'Standard', 80.00, 600),
-                                                                (1, 'Economy', 40.00, 1000);
-
-/* 4 - */
-
-INSERT INTO billets (user_id, match_id, categorie_id, numero_place, prix, qr_code) VALUES (1, 1, 2, 45, 80.00, 'QR_ABC_123');
-
-/* 5 - */ 
-
-INSERT INTO commentaires (user_id, match_id, contenu, note) VALUES (1, 1, 'Match incroyable ', 5);
-
-/********************************
-    Mise a jour de donnée 
-********************************/
-
+INSERT INTO commentaires (user_id, match_id, contenu, note) VALUES 
+(1, 2, 'Quelle Belle Match ', 4);
+/* Mise à jour mot de passe */
 UPDATE users
 SET password = '$2y$10$BAP2TPVnY6UN6FYSI/yJ7OeKvSWIbDsPLWJm5D4oPgUJMrY1ViNPO'
 WHERE email = 'amin@gmail.com';
 
-/* modifier la table matches */
-
-ALTER TABLE matches ADD raison_refus TEXT NULL;
-
-/****************************
-    triggers 
-*****************************/
+/**********************************
+    Triggers
+**********************************/
 DELIMITER $$
 
-CREATE TRIGGER statut_match
+CREATE TRIGGER IF NOT EXISTS statut_match
 BEFORE UPDATE ON matches
 FOR EACH ROW
 BEGIN
@@ -151,38 +137,39 @@ END$$
 
 DELIMITER ;
 
+/**********************************
+    Events
+**********************************/
 CREATE EVENT IF NOT EXISTS update_matches_terminee
 ON SCHEDULE EVERY 1 MINUTE
 DO
   UPDATE matches
-  SET status = 'termine'
-  WHERE status = 'en_attente'
+  SET statut = 'termine'
+  WHERE statut = 'en_attente'
     AND date_heure < NOW();
 
-
-/****************************
-    Les views 
-****************************/
-
-/* 1 - vue sql : Statistiques par match */
-
-CREATE VIEW vue_stats_match AS
+/**********************************
+    Views
+**********************************/
+CREATE OR REPLACE VIEW vue_stats_match AS
 SELECT
-    m.id AS match_id,m.equipe1,m.equipe2,COUNT(b.id) AS billets_vendus,
+    m.id AS match_id,
+    m.equipe1,
+    m.equipe2,
+    COUNT(b.id) AS billets_vendus,
     IFNULL(SUM(b.prix), 0) AS chiffre_affaires
 FROM matches m
 LEFT JOIN billets b ON m.id = b.match_id
 GROUP BY m.id;
 
-/*****************************
-    Procedure
-*****************************/
+/**********************************
+    Procedures
+**********************************/
 DELIMITER //
 
 CREATE PROCEDURE calculer_chiffre_affaires(IN p_match_id INT)
 BEGIN
-    SELECT 
-        IFNULL(SUM(prix), 0) AS total
+    SELECT IFNULL(SUM(prix), 0) AS total
     FROM billets
     WHERE match_id = p_match_id;
 END //

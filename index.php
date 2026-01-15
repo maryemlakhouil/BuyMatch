@@ -1,6 +1,15 @@
 <?php
+
+
+   ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+
+
 session_start();
 define('BASE_PATH', __DIR__);
+require_once BASE_PATH . '/vendor/autoload.php';
+
 
 /* REDIRECTION AVANT TOUT OUTPUT */
 if (isset($_SESSION['role']) && !isset($_GET['page'])) {
@@ -18,7 +27,7 @@ if (isset($_SESSION['role']) && !isset($_GET['page'])) {
             header("Location: index.php?page=home");
             exit;
     }
-}
+}   
 
 
 

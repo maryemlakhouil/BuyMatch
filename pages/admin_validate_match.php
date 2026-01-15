@@ -30,7 +30,7 @@
         $action  = $_POST['action'];
 
         // Statuts autorisés
-        $statuts_autorises = ['valide', 'annule'];
+        $statuts_autorises = ['valide', 'refuser'];
 
         if (in_array($action, $statuts_autorises)) {
             $admin->changerStatutMatch($matchId, $action);
@@ -172,7 +172,7 @@
                                     <!-- Annuler le match (au lieu de 'refuse') -->
                                     <button name="action" value="annule"
                                             class="btn-gradient-red text-white px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-red-500/20 hover:scale-105 active:scale-95 uppercase tracking-wider">
-                                        Annuler
+                                        Refuser
                                     </button>
                                 </form>
 

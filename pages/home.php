@@ -171,7 +171,8 @@
                 <!-- Central Navigation -->
                 <nav class="hidden md:flex items-center gap-10">
                     <a href="index.php?page=home" class="navbar-link text-sm">Accueil</a>
-                    <a href="index.php?page=home" class="navbar-link text-sm">Matchs</a>
+                    <a href="index.php?page=commnter_match" class="navbar-link text-sm">Matchs</a>
+                    <a href="index.php?page=mes_billets" class="navbar-link text-sm">Billets</a>
                 </nav>
 
                 <!-- Right Section: Auth/User -->
@@ -192,7 +193,7 @@
                                 <p class="text-xs font-semibold text-indigo-400"><?= htmlspecialchars($_SESSION['user_nom'] ?? 'Utilisateur') ?></p>
                             </div>
                             <div class="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center">
-                                <span class="text-sm font-bold text-indigo-400"><?= substr(htmlspecialchars($_SESSION['user_nom'] ?? 'U'), 0, 1) ?></span>
+                                <span class="text-sm font-bold text-indigo-400"><?= substr(htmlspecialchars($_SESSION['nom'] ?? 'U'), 0, 1) ?></span>
                             </div>
                         </div>
                         <a href="index.php?page=logout"

@@ -69,7 +69,7 @@ class Admin extends User {
 
     public function changerStatutMatch(int $matchId, string $statut): void{
 
-        $statutsAutorises = ['en_attente', 'valide', 'termine', 'annule'];
+        $statutsAutorises = ['en_attente', 'valide', 'termine', 'refuse'];
 
         if (!in_array($statut, $statutsAutorises)) {
             throw new Exception("Statut invalide");
@@ -109,7 +109,8 @@ class Admin extends User {
             WHERE id = ?
         ");
 
-        return $stmt->execute([$userId,$statut ? 1 : 0]);
+        return $stmt->execute([$statut ? 1 : 0,$userId]);
+
     }
 
     // 6 - supprimer Un utilisateur 
@@ -151,7 +152,7 @@ class Admin extends User {
 
     public function supprimerCommentaire(int $commentaireId): bool {
         $stmt = $this->db->prepare("
-        delete from commantairses where id = ?");
+        DELETE FROM commentaires WHERE id = ?");
         return $stmt->execute([$commentaireId]);
     }
 

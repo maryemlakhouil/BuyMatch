@@ -3,7 +3,6 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require_once __DIR__ . '/../vendor/autoload.php';
 
 class Mailer
 {
@@ -14,6 +13,9 @@ class Mailer
         $config = require __DIR__ . '/../config/mail.php';
 
         $this->mail = new PHPMailer(true);
+        $this->mail->SMTPDebug = 0;       
+        $this->mail->Debugoutput = 'html';  
+
 
         $this->mail->isSMTP();
         $this->mail->Host       = $config['host'];

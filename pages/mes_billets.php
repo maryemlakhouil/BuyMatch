@@ -158,7 +158,16 @@
     </nav>
 
     <div class="pt-24 px-6 pb-12">
+
         <div class="max-w-6xl mx-auto">
+             <div class="mb-8 flex items-center justify-between">
+        <a href="index.php?page=home" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span class="font-medium">Retour au Matchs </span>
+        </a>
+    </div>
             <!-- Titre avec gradient -->
             <h1 class="text-4xl font-orbitron font-black gradient-text mb-2">
                 Mes Billets
@@ -227,6 +236,7 @@
                 </div>
             <?php endif; ?>
         </div>
+       
     </div>
 
 </body>

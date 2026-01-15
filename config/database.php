@@ -2,10 +2,10 @@
 
 class Database {
     
-    private static $host = "localhost";
-    private static $db_name = "BuyMatch";
-    private static $username = "root";
-    private static $password = "";
+    private static $host = "127.0.0.1";
+    private static $db_name = "buymatch_db";
+    private static $username = "phpmyadmin";
+    private static $password = "lakhouil2003";
     private static $conn = null;
 
     public static function connect(){
